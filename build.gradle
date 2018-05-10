@@ -15,6 +15,23 @@ buildscript {
     }
 }
 
+ext.arch_version = "1.1.1"
+ext.room_version = "1.1.0"
+ext.support_version = "27.1.1"
+ext.constraint_layout_version = "1.1.0"
+ext.firebase_jobdispatcher_version = "0.8.5"
+ext.junit_version = "4.12"
+ext.support_test_version = "1.0.1"
+ext.retrofit_version = "2.4.0"
+ext.okhttp_version = "3.10.0"
+ext.rxjava_version = '2.1.13'
+ext.rxandroid_version = '2.0.2'
+ext.butter_knife_version = '8.8.1'
+ext.picasso_version = '2.71828'
+ext.stetho_version = '1.5.0'
+ext.espresso_core_version = '3.0.2'
+ext.jraw_version = '1.0.0'
+
 allprojects {
     repositories {
         google()
