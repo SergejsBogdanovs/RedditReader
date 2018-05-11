@@ -16,10 +16,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Support
     implementation "com.android.support:appcompat-v7:$support_version"
@@ -32,7 +36,9 @@ dependencies {
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     annotationProcessor "android.arch.lifecycle:compiler:$arch_version"
+
     // Java8 support for Lifecycles
     implementation "android.arch.lifecycle:common-java8:$arch_version"
 

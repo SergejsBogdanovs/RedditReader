@@ -30,7 +30,7 @@ ext.butter_knife_version = '8.8.1'
 ext.picasso_version = '2.71828'
 ext.stetho_version = '1.5.0'
 ext.espresso_core_version = '3.0.2'
-ext.jraw_version = '1.0.0'
+ext.jraw_version = '0.9.0'
 
 allprojects {
     repositories {
