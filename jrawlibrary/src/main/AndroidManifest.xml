@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="lv.st.sbogdano.jrawlibrary" >
+
+    <application>
+        <meta-data
+            android:name="lv.st.sbogdano.redditreader.REDDIT_USERNAME"
+            android:value="sbogdanoST" />
+        <meta-data
+            android:name="lv.st.sbogdano.redditreader.CLIENT_ID"
+            android:value="PT-oBeSZSm4eVA" />
+        <meta-data
+            android:name="lv.st.sbogdano.redditreader.REDIRECT_URL"
+            android:value="https://github.com/SergejsBogdanovs/RedditReader" />
+    </application>
+</manifest>

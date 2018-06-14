@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:minHeight="88dp">
+
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="@dimen/post_image_width"
+        android:layout_height="@dimen/post_image_height"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="TODO"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/emoticon_sad" />
+
+    <TextView
+        android:id="@+id/post_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:maxLines="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/post_image"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="TIL that a teenager fooled an entire school and its officials by pretending to be the State Senator. He was chauffeured, given a tour, and spoke to the high school students about being involved in politics. They only found out when the real Senator showed up the next month." />
+
+    <ImageView
+        android:id="@+id/comment_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/post_image"
+        app:layout_constraintTop_toBottomOf="@+id/post_title"
+        app:srcCompat="@drawable/comment" />
+
+    <TextView
+        android:id="@+id/comment_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/comment_icon"
+        app:layout_constraintStart_toEndOf="@+id/comment_icon"
+        app:layout_constraintTop_toTopOf="@+id/comment_icon"
+        tools:text="435" />
+
+    <ImageView
+        android:id="@+id/score_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/comment_count"
+        app:layout_constraintTop_toBottomOf="@+id/post_title"
+        app:srcCompat="@drawable/trending_up" />
+
+    <TextView
+        android:id="@+id/score_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/score_icon"
+        app:layout_constraintStart_toEndOf="@+id/score_icon"
+        app:layout_constraintTop_toTopOf="@+id/score_icon"
+        tools:text="180" />
+</android.support.constraint.ConstraintLayout>

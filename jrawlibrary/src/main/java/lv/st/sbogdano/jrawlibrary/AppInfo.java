@@ -1,4 +1,4 @@
-package lv.st.sbogdano.redditreader.ui.login;
+package lv.st.sbogdano.jrawlibrary;
 
 import net.dean.jraw.http.UserAgent;
 

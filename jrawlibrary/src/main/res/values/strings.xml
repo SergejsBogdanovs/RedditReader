@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">jrawLibrary</string>
+    <string name="prefs_file">lv.st.sbogdano.jrawlibrary.prefs_file</string>
+</resources>

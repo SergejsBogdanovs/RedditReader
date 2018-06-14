@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Posts -->
+    <dimen name="no_posts_icon_size">48dp</dimen>
+
+    <!-- Posts item -->
+    <dimen name="post_image_width">100dp</dimen>
+    <dimen name="post_image_height">56dp</dimen>
+    <dimen name="post_item_height">88dp</dimen>
+    <dimen name="post_item_padding">16dp</dimen>
+    <dimen name="post_image_right_padding">20dp</dimen>
+
+</resources>

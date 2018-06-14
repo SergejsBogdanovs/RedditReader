@@ -1,6 +1,5 @@
 package lv.st.sbogdano.redditreader.ui.login;
 
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
+import net.dean.jraw.http.oauth.OAuthHelper;
 
 import java.net.URL;
 
@@ -23,6 +23,9 @@ import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final Credentials CREDENTIALS = Credentials.installedApp("PT-oBeSZSm4eVA",
+            "https://github.com/SergejsBogdanovs/RedditReader");
 
     private static final String LOG_TAG = LoginActivity.class.getSimpleName();
     @BindView(R.id.webView)
@@ -34,31 +37,29 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        try {
-            final Authentication authentication = Authentication.getInstance(this);
-            final URL authenticationUrl = authentication.getAuthUrl();
-            mWebView.loadUrl(authenticationUrl.toExternalForm());
+        final OAuthHelper helper = AuthenticationManager.get().getRedditClient().getOAuthHelper();
 
-            mWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    if (url.contains("code=")) {
-                        Log.d(LOG_TAG, "webview url: " + url);
-                        // We've detected the redirect URL
-                        onUserChallenge(url, authentication.getCredentials());
-                    } else if (url.contains("error=")) {
-                        Toast.makeText(
-                                LoginActivity.this,
-                                "Press 'ALLOW' to log in with this account",
-                                Toast.LENGTH_SHORT).show();
-                        mWebView.loadUrl(authenticationUrl.toExternalForm());
-                    }
+        String[] scopes = {"identity", "read", "subscribe", "mysubreddits", "vote"};
+
+        final URL authorizationUrl = helper.getAuthorizationUrl(
+                CREDENTIALS,
+                true,
+                true,
+                scopes);
+
+        mWebView.loadUrl(authorizationUrl.toExternalForm());
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                if (url.contains("code=")) {
+                    onUserChallenge(url, CREDENTIALS);
+                } else if (url.contains("error=")) {
+                    Toast.makeText(LoginActivity.this, R.string.must_login, Toast.LENGTH_SHORT).show();
+                    mWebView.loadUrl(authorizationUrl.toExternalForm());
                 }
-            });
+            }
+        });
 
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     private void onUserChallenge(String url, Credentials credentials) {
@@ -66,8 +67,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(String... params) {
                 try {
-                    OAuthData data = AuthenticationManager.get().getRedditClient().getOAuthHelper()
+                    OAuthData data = AuthenticationManager
+                            .get()
+                            .getRedditClient()
+                            .getOAuthHelper()
                             .onUserChallenge(params[0], credentials);
+
                     AuthenticationManager.get().getRedditClient().authenticate(data);
                     return AuthenticationManager.get().getRedditClient().getAuthenticatedUser();
                 } catch (NetworkException | OAuthException e) {

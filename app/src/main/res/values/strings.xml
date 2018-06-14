@@ -1,4 +1,18 @@
 <resources>
+
+    <!-- Main -->
     <string name="app_name">RedditReader</string>
-    <string name="prefs_file">lv.st.sbogdano.redditreader.prefs_file</string>
+
+    <!-- Login -->
+    <string name="must_login">You have to login!</string>
+
+    <!-- PostsActivity -->
+    <string name="no_posts_text">Can\'t load posts!</string>
+
+    <!-- Settings -->
+    <string name="action_my_subreddits">My Subreddits</string>
+
+    <!-- Sync -->
+    <string name="reddit_client_location">subscriber</string>
+
 </resources>
