@@ -10,22 +10,26 @@ import lv.st.sbogdano.redditreader.data.database.posts.PostsDao;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
 
-@Database(entities = {PostEntry.class, SubredditEntry.class} ,version = 1)
-public abstract class PostsDatabase extends RoomDatabase{
+@Database(
+        entities = {PostEntry.class, SubredditEntry.class},
+        version = 1,
+        exportSchema = false
+)
+public abstract class RedditDatabase extends RoomDatabase{
 
     private static final String DATABASE_NAME = "reddit";
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
-    private static PostsDatabase sInstance;
+    private static RedditDatabase sInstance;
 
-    public static PostsDatabase getInstance(Context context) {
+    public static RedditDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = Room.databaseBuilder(
                         context.getApplicationContext(),
-                        PostsDatabase.class,
-                        PostsDatabase.DATABASE_NAME).build();
+                        RedditDatabase.class,
+                        RedditDatabase.DATABASE_NAME).build();
             }
         }
         return sInstance;

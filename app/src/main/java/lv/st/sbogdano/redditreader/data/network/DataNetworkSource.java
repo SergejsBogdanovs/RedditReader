@@ -6,14 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.Driver;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
-
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
@@ -27,36 +19,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import lv.st.sbogdano.redditreader.AppExecutors;
-import lv.st.sbogdano.redditreader.data.MySubreddit;
 import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
+import lv.st.sbogdano.redditreader.sync.PostsSyncIntentService;
+import lv.st.sbogdano.redditreader.sync.SubredditsSyncIntentService;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
+import lv.st.sbogdano.redditreader.util.AppExecutors;
 
-public class PostsNetworkDataSource {
+public class DataNetworkSource {
 
-    public static final String TAG = PostsNetworkDataSource.class.getSimpleName();
+    public static final String TAG = DataNetworkSource.class.getSimpleName();
 
     // The number of posts we want our API to return, set to 100 posts.
-    public static final int NUM_POSTS = 100;
-
-    // Interval at which to sync with the Reddit posts.
-    private static final int SYNC_INTERVAL_HOURS = 3;
-    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS
-            .toSeconds(SYNC_INTERVAL_HOURS);
-    private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3;
-    private static final String POSTS_SYNC_TAG = "posts-sync";
+    public static final String ITEMS_PER_PAGE = "items_per_page";
+    public static final String PAGES_COUNT = "pages_count";
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
-    private static PostsNetworkDataSource sInstance;
+    private static DataNetworkSource sInstance;
     private final Context mContext;
     private final AppExecutors mExecutors;
 
     private final MutableLiveData<List<PostEntry>> mDownloadedPosts;
     private final MutableLiveData<List<SubredditEntry>> mDownloadedSubreddits;
 
-    private PostsNetworkDataSource(Context context, AppExecutors appExecutors) {
+
+    private DataNetworkSource(Context context, AppExecutors appExecutors) {
         mContext = context;
         mExecutors = appExecutors;
         mDownloadedPosts = new MutableLiveData<>();
@@ -66,16 +54,17 @@ public class PostsNetworkDataSource {
     /**
      * Get the singleton for this class
      */
-    public static PostsNetworkDataSource getInstance(Context context, AppExecutors executors) {
+    public static DataNetworkSource getInstance(Context context, AppExecutors executors) {
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new PostsNetworkDataSource(context.getApplicationContext(), executors);
+                sInstance = new DataNetworkSource(context.getApplicationContext(), executors);
             }
         }
         return sInstance;
     }
 
-    public LiveData<List<PostEntry>> getCurrentPosts() {
+    public LiveData<List<PostEntry>> getCurrentPosts(int page, int itemsPerPage) {
+        startFetchPostsService(page, itemsPerPage);
         return mDownloadedPosts;
     }
 
@@ -83,45 +72,26 @@ public class PostsNetworkDataSource {
         return mDownloadedSubreddits;
     }
 
-    /**
-     * Starts an intent service to fetch the posts.
-     */
-    public void startFetchPostsService() {
-        Intent intentToFetch = new Intent(mContext, PostsSyncIntentService.class);
-        mContext.startService(intentToFetch);
+    public void startFetchPostsService(int page, int items) {
+        Log.v(TAG, "startFetchPostsService");
+        Intent intent = new Intent(mContext, PostsSyncIntentService.class);
+        intent.putExtra(PAGES_COUNT, page);
+        intent.putExtra(ITEMS_PER_PAGE, items);
+        mContext.startService(intent);
+    }
+
+    public void startFetchSubredditsService() {
+        Intent intent = new Intent(mContext, SubredditsSyncIntentService.class);
+        mContext.startService(intent);
     }
 
     /**
-     * Schedules a repeating job service which fetches the posts.
+     * Gets the newest posts
      */
-    public void scheduleRecurringFetchPostsSync() {
-        Driver driver = new GooglePlayDriver(mContext);
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
-
-        // Create the Job to periodically sync Reddit posts
-        Job syncSunshineJob = dispatcher.newJobBuilder()
-                .setService(PostsFirebaseJobService.class)
-                .setTag(POSTS_SYNC_TAG)
-                .setConstraints(Constraint.ON_ANY_NETWORK)
-                .setLifetime(Lifetime.FOREVER)
-                .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(
-                        SYNC_INTERVAL_SECONDS,
-                        SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
-                .setReplaceCurrent(true)
-                .build();
-
-        // Schedule the Job with the dispatcher
-        dispatcher.schedule(syncSunshineJob);
-    }
-
-    /**
-     * Gets the newest posts and subreddits
-     */
-    void fetchPosts() {
-        Log.v(TAG, "fetchPosts: is started" );
+    public void loadPosts(int pages, int items) {
 
         mExecutors.networkIO().execute(() -> {
+            Log.v(TAG, "fetchPosts: is started");
 
             AuthenticationState state = AuthenticationManager.get().checkAuthState();
             if (state == AuthenticationState.NEED_REFRESH) {
@@ -138,9 +108,11 @@ public class PostsNetworkDataSource {
 
                 // Fetching Posts
                 SubredditPaginator paginator = new SubredditPaginator(redditClient);
-                paginator.setLimit(NUM_POSTS);
-                Listing<Submission> posts = paginator.next();
-
+                paginator.setLimit(items);
+                Listing<Submission> posts = null;
+                for (int i = 0; i < pages; i++) {
+                    posts = paginator.next();
+                }
                 List<PostEntry> postEntries = new ArrayList<>();
                 for (Submission post : posts) {
                     postEntries.add(new PostEntry(
@@ -154,19 +126,56 @@ public class PostsNetworkDataSource {
                 }
 
                 mDownloadedPosts.postValue(postEntries);
+            }
+        });
+    }
 
-                // Fetching user subreddits
+
+    /**
+     * Gets the user subscribed subreddits.
+     */
+    public void loadSubreddits() {
+        mExecutors.networkIO().execute(() -> {
+            Log.v(TAG, "fetchSubreddits: is started");
+
+            AuthenticationState state = AuthenticationManager.get().checkAuthState();
+            if (state == AuthenticationState.NEED_REFRESH) {
+                try {
+                    AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+
+            if (redditClient.isAuthenticated()) {
+
+                // Fetching user subscribed Subreddits
                 UserSubredditsPaginator subredditsPaginator
                         = new UserSubredditsPaginator(redditClient, "subscriber");
-
                 Listing<Subreddit> subreddits = subredditsPaginator.next();
                 List<SubredditEntry> subredditEntries = new ArrayList<>();
                 for (Subreddit subreddit : subreddits) {
-                    subredditEntries.add(new SubredditEntry(subreddit.getDisplayName(), true));
+                    subredditEntries.add(new SubredditEntry(subreddit.getDisplayName()));
                 }
 
                 mDownloadedSubreddits.postValue(subredditEntries);
             }
         });
     }
+
+    public List<Subreddit> getSubscribedSubreddits() {
+
+        RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+
+        // Fetching user subreddits
+        UserSubredditsPaginator subredditsPaginator
+                = new UserSubredditsPaginator(redditClient, "subscriber");
+
+        Listing<Subreddit> subreddits = subredditsPaginator.next();
+
+        return new ArrayList<>(subreddits);
+    }
+
 }

@@ -1,99 +1,51 @@
 package lv.st.sbogdano.redditreader.ui.posts;
 
-import android.content.Context;
+import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import lv.st.sbogdano.redditreader.R;
 import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostAdapterViewHolder> {
+public class PostsAdapter extends PagedListAdapter<PostEntry, RecyclerView.ViewHolder> {
 
-    private final Context mContext;
-    private final PostAdapterOnItemClickListener mClickHandler;
-    private List<PostEntry> mPostEntries;
+    private static final String TAG = "PostsAdapter";
 
-    public PostsAdapter(Context context, PostAdapterOnItemClickListener clickHandler) {
-        mContext = context;
-        mClickHandler = clickHandler;
-    }
 
-    public interface PostAdapterOnItemClickListener {
-        void onItemClick();
+    public static final DiffUtil.ItemCallback<PostEntry> POST_COMPARATOR
+            = new DiffUtil.ItemCallback<PostEntry>() {
+
+        @Override
+        public boolean areItemsTheSame(PostEntry oldItem, PostEntry newItem) {
+            return oldItem.getPostTitle().equals(newItem.getPostTitle());
+        }
+
+        @Override
+        public boolean areContentsTheSame(PostEntry oldItem, PostEntry newItem) {
+            return true;
+        }
+    };
+
+    PostsAdapter() {
+        super(POST_COMPARATOR);
     }
 
     @NonNull
     @Override
-    public PostsAdapter.PostAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-        return new PostAdapterViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return PostViewHolder.getInstance(parent);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostsAdapter.PostAdapterViewHolder holder, int position) {
-
-        PostEntry postEntry = mPostEntries.get(position);
-
-        // Post Image
-        Picasso.get()
-                .load(postEntry.getPostThumbnail())
-                .into(holder.mPostImage);
-
-        // Post Title
-        holder.mPostTitle.setText(postEntry.getPostTitle());
-
-        // Post comments count
-        holder.mCommentCount.setText(String.valueOf(postEntry.getPostCommentsCount()));
-
-        // Posts rating count
-        holder.mScoreCount.setText(String.valueOf(postEntry.getPostScore()));
-    }
-
-    @Override
-    public int getItemCount() {
-        if (mPostEntries == null) {
-            return 0;
-        }
-        return mPostEntries.size();
-    }
-
-    public void swapPosts(List<PostEntry> newPostEntries) {
-        if (mPostEntries == null) {
-            mPostEntries = newPostEntries;
-            notifyDataSetChanged();
-        }
-    }
-
-    public class PostAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        @BindView(R.id.post_image)
-        ImageView mPostImage;
-        @BindView(R.id.post_title)
-        TextView mPostTitle;
-        @BindView(R.id.comment_count)
-        TextView mCommentCount;
-        @BindView(R.id.score_count)
-        TextView mScoreCount;
-
-        public PostAdapterViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-
-        @Override
-        public void onClick(View view) {
-
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        PostEntry postEntry = getItem(position);
+        if (postEntry != null) {
+            ((PostViewHolder) holder).bind(postEntry);
         }
     }
 }

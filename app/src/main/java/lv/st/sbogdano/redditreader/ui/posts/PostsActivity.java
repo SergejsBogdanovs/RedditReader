@@ -2,14 +2,11 @@ package lv.st.sbogdano.redditreader.ui.posts;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,53 +15,45 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.http.oauth.Credentials;
-import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.ViewModelFactory;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
-import lv.st.sbogdano.redditreader.ui.settings.SubredditActivity;
+import lv.st.sbogdano.redditreader.ui.subreddits.SubredditActivity;
+import lv.st.sbogdano.redditreader.viewmodels.PostsViewModel;
+import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
-public class PostsActivity extends AppCompatActivity
-        implements PostsAdapter.PostAdapterOnItemClickListener,
-        SharedPreferences.OnSharedPreferenceChangeListener{
+public class PostsActivity extends AppCompatActivity {
 
     private static final String TAG = PostsActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.pager_strip)
-    PagerTabStrip mPagerStrip;
-    @BindView(R.id.pager)
-    ViewPager mPager;
     @BindView(R.id.posts_recycler_view)
     RecyclerView mPostsRecyclerView;
     @BindView(R.id.postsLL)
     LinearLayout mPostsLL;
-    @BindView(R.id.noPostsIcon)
-    ImageView mNoPostsIcon;
-    @BindView(R.id.noPostsText)
-    TextView mNoPostsText;
     @BindView(R.id.noPosts)
     LinearLayout mNoPosts;
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar mPbLoadingIndicator;
 
-    private List<Submission> posts = new ArrayList<>();
+    private boolean mFirstLoad = true;
+
     private PostsViewModel mPostsViewModel;
-    private PostsAdapter mPostsAdapter;
-    private int mPosition = RecyclerView.NO_POSITION;
-    private SharedPreferences mPreferences;
+    private PostsAdapter mPostsAdapter = new PostsAdapter();
+
+    private Parcelable mState;
+    private static Bundle mBundleRecyclerViewState;
+    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout_state";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,74 +61,52 @@ public class PostsActivity extends AppCompatActivity
         setContentView(R.layout.activity_posts);
         ButterKnife.bind(this);
 
-        // Set up the toolbar.
+        mPostsViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
+                .get(PostsViewModel.class);
+
+        setupToolBar();
+        setupPostsAdapter();
+    }
+
+    private void setupToolBar() {
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+    }
 
-        ViewModelFactory viewModelFactory
-                = ViewModelFactory.getInstance(getApplication());
-        mPostsViewModel = ViewModelProviders.of(this, viewModelFactory).get(PostsViewModel.class);
-
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        setupPostsAdapter();
-        subscribeDataStreams();
+    private void setupPostsAdapter() {
+        mPostsRecyclerView.addItemDecoration(
+                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        mPreferences.registerOnSharedPreferenceChangeListener(this);
         checkAuthenticationState();
+        if (mBundleRecyclerViewState != null) {
+            mState = mBundleRecyclerViewState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
+        }
+        mPostsAdapter.submitList(null);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-    private void setupPostsAdapter() {
-        mPostsRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mPostsRecyclerView.setLayoutManager(layoutManager);
-        mPostsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mPostsRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                subscribeDataStreams();
-            }
-        });
-        mPostsAdapter = new PostsAdapter(this, this);
-        mPostsRecyclerView.setAdapter(mPostsAdapter);
-    }
-
-    private void subscribeDataStreams() {
-
-        // Getting Posts
-        mPostsViewModel.getPosts().observe(this, postEntries -> {
-            mPostsAdapter.swapPosts(postEntries);
-            if (mPosition == RecyclerView.NO_POSITION) {
-                mPosition = 0;
-            }
-            mPostsRecyclerView.smoothScrollToPosition(mPosition);
-
-            if (postEntries != null && postEntries.size() != 0) {
-                Log.v(TAG, "subscribeDataStreams: " + postEntries.size());
-                showPostView();
-            } else {
-                showNoPostsView();
-            }
-        });
-
-        // Getting Subreddits
-
+        // save RecyclerView state
+        mBundleRecyclerViewState = new Bundle();
+        mState = mPostsRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mState);
     }
 
     private void checkAuthenticationState() {
         AuthenticationState state = AuthenticationManager.get().checkAuthState();
+        Log.v(TAG, "checkAuthenticationState: " + state.toString());
         switch (state) {
             case READY:
-                if (posts.size() == 0) {
-                    subscribeDataStreams();
-                }
+                subscribeDataStreams(mFirstLoad);
+                mFirstLoad = false;
                 break;
             case NONE:
                 startActivity(new Intent(this, LoginActivity.class));
@@ -150,7 +117,7 @@ public class PostsActivity extends AppCompatActivity
         }
     }
 
-    private void refreshAccessTokenAsync() {
+    public void refreshAccessTokenAsync() {
         new AsyncTask<Credentials, Void, Void>() {
             @Override
             protected Void doInBackground(Credentials... credentials) {
@@ -164,19 +131,41 @@ public class PostsActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                subscribeDataStreams();
+                subscribeDataStreams(true);
             }
         }.execute();
     }
 
-    private void showNoPostsView() {
-        mPostsLL.setVisibility(View.INVISIBLE);
+    private void subscribeDataStreams(boolean firstLoad) {
+        mPostsRecyclerView.setAdapter(mPostsAdapter);
+        mPostsViewModel.getPosts(firstLoad).observe(this, pagedLists -> {
+            Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
+            if (pagedLists != null && pagedLists.size() != 0) {
+                showPostView();
+            } else {
+                showEmptyList();
+                mPostsAdapter.submitList(null);
+                return;
+            }
+            mPostsAdapter.submitList(pagedLists);
+        });
+    }
+
+    private void showEmptyList() {
         mNoPosts.setVisibility(View.VISIBLE);
+        mPostsRecyclerView.setVisibility(View.GONE);
+    }
+
+    private void showLoading() {
+        mPostsLL.setVisibility(View.INVISIBLE);
+        mNoPosts.setVisibility(View.INVISIBLE);
+        mPbLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     private void showPostView() {
-        mNoPosts.setVisibility(View.INVISIBLE);
-        mPostsLL.setVisibility(View.VISIBLE);
+        mNoPosts.setVisibility(View.GONE);
+        mPostsRecyclerView.setVisibility(View.VISIBLE);
+        mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
     }
 
     @Override
@@ -195,13 +184,4 @@ public class PostsActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onItemClick() {
-
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-
-    }
 }

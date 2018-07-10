@@ -1,4 +1,4 @@
-package lv.st.sbogdano.redditreader;
+package lv.st.sbogdano.redditreader.util;
 
 import android.app.Application;
 

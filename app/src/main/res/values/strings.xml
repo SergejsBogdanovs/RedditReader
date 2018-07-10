@@ -1,18 +1,21 @@
 <resources>
 
-    <!-- Main -->
+    <!-- Application -->
     <string name="app_name">RedditReader</string>
+    <string name="unsubscribe">unsubscribe</string>
 
     <!-- Login -->
     <string name="must_login">You have to login!</string>
 
     <!-- PostsActivity -->
-    <string name="no_posts_text">Can\'t load posts!</string>
+    <string name="no_posts_text">No results!</string>
 
-    <!-- Settings -->
+    <!-- SubredditsActivity -->
+    <string name="my_subreddits_title">My Subreddits</string>
     <string name="action_my_subreddits">My Subreddits</string>
 
     <!-- Sync -->
     <string name="reddit_client_location">subscriber</string>
+    <string name="loading">Loading...</string>
 
 </resources>

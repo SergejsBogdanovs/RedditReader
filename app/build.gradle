@@ -49,6 +49,9 @@ dependencies {
     // Java8 support for Lifecycles
     implementation "android.arch.lifecycle:common-java8:$arch_version"
 
+    // Paging
+    implementation "android.arch.paging:runtime:$paging_version"
+
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"

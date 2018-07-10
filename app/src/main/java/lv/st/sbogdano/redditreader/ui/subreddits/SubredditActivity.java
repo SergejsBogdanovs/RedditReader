@@ -1,8 +1,10 @@
-package lv.st.sbogdano.redditreader.ui.settings;
+package lv.st.sbogdano.redditreader.ui.subreddits;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,14 +13,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.ViewModelFactory;
+import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
+import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
 public class SubredditActivity extends AppCompatActivity {
 
     public static final String TAG = SubredditActivity.class.getSimpleName();
+
 
     @BindView(R.id.rv_subreddits)
     RecyclerView mRvSubreddits;
@@ -36,23 +44,34 @@ public class SubredditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_subreddit);
         ButterKnife.bind(this);
 
+        mSubredditViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
+                .get(SubredditViewModel.class);
+
+        mSubredditAdapter = new SubredditAdapter(this, mSubredditViewModel, new ArrayList<>());
+
+        setupToolBar();
+
+        subscribeDataStreams();
+    }
+
+    private void setupToolBar() {
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setTitle(R.string.my_subreddits_title);
         }
+    }
 
-        mSubredditAdapter = new SubredditAdapter();
-        mRvSubreddits.setLayoutManager(new LinearLayoutManager(this));
-        mRvSubreddits.setHasFixedSize(true);
-        mRvSubreddits.setAdapter(mSubredditAdapter);
-
-        ViewModelFactory viewModelFactory
-                = ViewModelFactory.getInstance(getApplication());
-        mSubredditViewModel = ViewModelProviders.of(this, viewModelFactory).get(SubredditViewModel.class);
-
-        mSubredditViewModel.getSubreddits().observe(this, subredditEntries -> {
-            Log.v(TAG, "my subreddits " + subredditEntries.size());
-            //mSubredditAdapter.swapSubreddits();
+    public void subscribeDataStreams() {
+        mSubredditViewModel.getSubreddits().observe(this, list -> {
+            Log.v(TAG, "subscribeDataStreams: "  + list.size());
+            if (list != null && list.size() != 0) {
+                mRvSubreddits.setAdapter(mSubredditAdapter);
+                mSubredditAdapter.swapSubredditList(list);
+            } else {
+                mSubredditAdapter.swapSubredditList(new ArrayList<>());
+            }
         });
     }
 

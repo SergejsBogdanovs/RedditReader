@@ -2,26 +2,29 @@ package lv.st.sbogdano.redditreader.data.database.subreddits;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-@Entity(tableName = "subreddits")
-public class SubredditEntry {
+import net.dean.jraw.models.Subreddit;
+
+@Entity(tableName = "subreddits",
+        indices = {@Index(value = {"subredditName"}, unique = true)})
+public class SubredditEntry implements Parcelable{
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String subredditName;
-    private boolean favorite;
 
-    public SubredditEntry(int id, String subredditName, boolean favorite) {
+    public SubredditEntry(int id, String subredditName) {
         this.id = id;
         this.subredditName = subredditName;
-        this.favorite = favorite;
     }
 
     @Ignore
-    public SubredditEntry(String subredditName, boolean favorite) {
+    public SubredditEntry(String subredditName) {
         this.subredditName = subredditName;
-        this.favorite = favorite;
     }
 
     public int getId() {
@@ -40,11 +43,31 @@ public class SubredditEntry {
         this.subredditName = subredditName;
     }
 
-    public boolean isFavorite() {
-        return favorite;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.subredditName);
     }
+
+    protected SubredditEntry(Parcel in) {
+        this.id = in.readInt();
+        this.subredditName = in.readString();
+    }
+
+    public static final Creator<SubredditEntry> CREATOR = new Creator<SubredditEntry>() {
+        @Override
+        public SubredditEntry createFromParcel(Parcel source) {
+            return new SubredditEntry(source);
+        }
+
+        @Override
+        public SubredditEntry[] newArray(int size) {
+            return new SubredditEntry[size];
+        }
+    };
 }

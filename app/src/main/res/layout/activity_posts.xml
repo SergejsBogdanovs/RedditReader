@@ -8,8 +8,10 @@
     tools:context=".ui.posts.PostsActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -19,45 +21,26 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="vertical">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v4.view.PagerTabStrip
-                android:id="@+id/pager_strip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp" />
-
-        </android.support.v4.view.ViewPager>
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/posts_container"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/postsLL"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/posts_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
         </LinearLayout>
 
         <LinearLayout
@@ -65,23 +48,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/noPostsIcon"
                 android:layout_width="@dimen/no_posts_icon_size"
                 android:layout_height="@dimen/no_posts_icon_size"
                 android:layout_gravity="center"
-                android:src="@drawable/emoticon_sad"/>
+                android:src="@drawable/emoticon_sad" />
 
             <TextView
                 android:id="@+id/noPostsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/no_posts_text"/>
+                android:text="@string/no_posts_text" />
+
         </LinearLayout>
 
-    </RelativeLayout>
+        <ProgressBar
+            android:id="@+id/pb_loading_indicator"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible" />
+
+</android.support.design.widget.CoordinatorLayout>
 
 </LinearLayout>

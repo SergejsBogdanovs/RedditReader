@@ -2,13 +2,16 @@ package lv.st.sbogdano.redditreader.data.database.posts;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-@Entity(tableName = "posts")
+@Entity(tableName = "posts",
+        indices = {@Index(value = {"postTitle"}, unique = true)})
 public class PostEntry {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int subredditId;
     private String subredditName;
     private String postTitle;
     private String postAuthor;
@@ -17,8 +20,8 @@ public class PostEntry {
     private int postScore;
     private int postCommentsCount;
 
-    public PostEntry(int id, String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
-        this.id = id;
+    public PostEntry(int subredditId, String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
+        this.subredditId = subredditId;
         this.subredditName = subredditName;
         this.postTitle = postTitle;
         this.postAuthor = postAuthor;
@@ -39,12 +42,13 @@ public class PostEntry {
         this.postCommentsCount = postCommentsCount;
     }
 
-    public int getId() {
-        return id;
+
+    public int getSubredditId() {
+        return subredditId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSubredditId(int subredditId) {
+        this.subredditId = subredditId;
     }
 
     public String getSubredditName() {

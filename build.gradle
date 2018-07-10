@@ -16,7 +16,8 @@ buildscript {
 }
 
 ext.arch_version = "1.1.1"
-ext.room_version = "1.1.0"
+ext.room_version = "1.1.1"
+ext.paging_version = "1.0.1"
 ext.support_version = "27.1.1"
 ext.constraint_layout_version = "1.1.2"
 ext.firebase_jobdispatcher_version = "0.8.5"
