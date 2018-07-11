@@ -11,16 +11,16 @@ import java.util.List;
 @Dao
 public interface PostsDao {
 
-    @Query("SELECT * FROM posts")
-    DataSource.Factory<Integer, PostEntry> getPosts();
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<PostEntry> postEntries);
-
-    @Query("DELETE FROM posts")
-    void deleteAllPosts();
-
-    @Query("DELETE FROM posts WHERE subredditName = :name")
-    void deletePostsByName(String name);
+//    @Query("SELECT * FROM posts")
+//    DataSource.Factory<Integer, PostEntry> getPosts();
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    void insertAll(List<PostEntry> postEntries);
+//
+//    @Query("DELETE FROM posts")
+//    void deleteAllPosts();
+//
+//    @Query("DELETE FROM posts WHERE subredditName = :name")
+//    void deletePostsByName(String name);
 
 }

@@ -6,6 +6,7 @@ import android.arch.paging.PagedList;
 
 import lv.st.sbogdano.redditreader.data.RedditDataRepository;
 import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
+import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 
 public class PostsViewModel extends ViewModel{
 
@@ -17,8 +18,8 @@ public class PostsViewModel extends ViewModel{
         mRedditDataRepository = redditDataRepository;
     }
 
-    public LiveData<PagedList<PostEntry>>getPosts(boolean firstLoad) {
-        return mRedditDataRepository.getPostsResult(firstLoad);
+    public LiveData<PagedList<PostEntry>>getPosts(SubredditEntry subredditEntry) {
+        return mRedditDataRepository.getPostsResult(subredditEntry);
     }
 
 }

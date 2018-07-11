@@ -19,6 +19,6 @@ public class PostsSyncIntentService extends IntentService{
                 InjectorUtils.provideNetworkDataSource(this.getApplicationContext());
         int pages = intent != null ? intent.getIntExtra(DataNetworkSource.PAGES_COUNT, 1) : 1;
         int items = intent != null ? intent.getIntExtra(DataNetworkSource.ITEMS_PER_PAGE, 10) : 10;
-        dataNetworkSource.loadPosts(pages, items);
+        //dataNetworkSource.loadPosts(pages, items);
     }
 }

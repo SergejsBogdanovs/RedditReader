@@ -6,12 +6,12 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "posts",
-        indices = {@Index(value = {"postTitle"}, unique = true)})
+//@Entity(tableName = "posts",
+//        indices = {@Index(value = {"postTitle"}, unique = true)})
 public class PostEntry {
 
-    @PrimaryKey(autoGenerate = true)
-    private int subredditId;
+//    @PrimaryKey(autoGenerate = true)
+    private String subredditId;
     private String subredditName;
     private String postTitle;
     private String postAuthor;
@@ -20,7 +20,7 @@ public class PostEntry {
     private int postScore;
     private int postCommentsCount;
 
-    public PostEntry(int subredditId, String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
+    public PostEntry(String subredditId, String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
         this.subredditId = subredditId;
         this.subredditName = subredditName;
         this.postTitle = postTitle;
@@ -31,23 +31,23 @@ public class PostEntry {
         this.postCommentsCount = postCommentsCount;
     }
 
-    @Ignore
-    public PostEntry(String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
-        this.subredditName = subredditName;
-        this.postTitle = postTitle;
-        this.postAuthor = postAuthor;
-        this.postPermLink = postPermLink;
-        this.postThumbnail = postThumbnail;
-        this.postScore = postScore;
-        this.postCommentsCount = postCommentsCount;
-    }
+//    @Ignore
+//    public PostEntry(String subredditName, String postTitle, String postAuthor, String postPermLink, String postThumbnail, int postScore, int postCommentsCount) {
+//        this.subredditName = subredditName;
+//        this.postTitle = postTitle;
+//        this.postAuthor = postAuthor;
+//        this.postPermLink = postPermLink;
+//        this.postThumbnail = postThumbnail;
+//        this.postScore = postScore;
+//        this.postCommentsCount = postCommentsCount;
+//    }
 
 
-    public int getSubredditId() {
+    public String getSubredditId() {
         return subredditId;
     }
 
-    public void setSubredditId(int subredditId) {
+    public void setSubredditId(String subredditId) {
         this.subredditId = subredditId;
     }
 

@@ -17,19 +17,19 @@ public class DataLocalCache {
     private SubredditsDao mSubredditsDao;
     private AppExecutors mExecutors;
 
-    public DataLocalCache(PostsDao postsDao, SubredditsDao subredditsDao, AppExecutors executors) {
-        mPostsDao = postsDao;
+    public DataLocalCache( SubredditsDao subredditsDao, AppExecutors executors) {
+        //mPostsDao = postsDao;
         mSubredditsDao = subredditsDao;
         mExecutors = executors;
     }
 
-    public DataSource.Factory<Integer, PostEntry> getPosts() {
-        return mPostsDao.getPosts();
-    }
-
-    public void insertPosts(List<PostEntry> postEntries) {
-        mExecutors.diskIO().execute(() -> mPostsDao.insertAll(postEntries));
-    }
+//    public DataSource.Factory<Integer, PostEntry> getPosts() {
+//        return mPostsDao.getPosts();
+//    }
+//
+//    public void insertPosts(List<PostEntry> postEntries) {
+//        mExecutors.diskIO().execute(() -> mPostsDao.insertAll(postEntries));
+//    }
 
     public LiveData<List<SubredditEntry>> getSubreddits() {
         return mSubredditsDao.getSubbreddits();
@@ -47,11 +47,11 @@ public class DataLocalCache {
         mSubredditsDao.deleteSubreddit(name);
     }
 
-    public void deletePosts(String subredditName) {
-        mPostsDao.deletePostsByName(subredditName);
-    }
-
-    public void deleteAllPosts() {
-        mExecutors.diskIO().execute(() -> mPostsDao.deleteAllPosts());
-    }
+//    public void deletePosts(String subredditName) {
+//        mPostsDao.deletePostsByName(subredditName);
+//    }
+//
+//    public void deleteAllPosts() {
+//        mExecutors.diskIO().execute(() -> mPostsDao.deleteAllPosts());
+//    }
 }

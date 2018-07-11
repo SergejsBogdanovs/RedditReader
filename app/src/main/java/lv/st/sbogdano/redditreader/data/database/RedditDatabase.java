@@ -11,7 +11,7 @@ import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
 
 @Database(
-        entities = {PostEntry.class, SubredditEntry.class},
+        entities = { SubredditEntry.class},
         version = 1,
         exportSchema = false
 )
@@ -35,6 +35,6 @@ public abstract class RedditDatabase extends RoomDatabase{
         return sInstance;
     }
 
-    public abstract PostsDao postsDao();
+    //public abstract PostsDao postsDao();
     public abstract SubredditsDao subredditsDao();
 }

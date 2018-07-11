@@ -1,7 +1,6 @@
 package lv.st.sbogdano.redditreader.data;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.paging.DataSource;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.content.Context;
@@ -17,13 +16,12 @@ import lv.st.sbogdano.redditreader.data.database.DataLocalCache;
 import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
-import lv.st.sbogdano.redditreader.data.network.posts.PostsBoundaryCallback;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
 
 public class RedditDataRepository {
 
     private static final String TAG = "RedditDataRepository";
-    private static final int POSTS_DATABASE_PAGE_SIZE = 20;
+    private static final int POSTS_DATABASE_PAGE_SIZE = 10;
 
     private static final Object LOCK = new Object();
     private static RedditDataRepository sInstance;
@@ -61,24 +59,31 @@ public class RedditDataRepository {
         return sInstance;
     }
 
-    public LiveData<PagedList<PostEntry>> getPostsResult(boolean firsLoad) {
+    public LiveData<PagedList<PostEntry>> getPostsResult(SubredditEntry subredditEntry) {
 
-        if (firsLoad || needRefresh) {
-            mDataLocalCache.deleteAllPosts();
-        }
+//        if (firsLoad || needRefresh) {
+//            mDataLocalCache.deleteAllPosts();
+//        }
+//
+//        // Get data source factory from the local cache
+//        DataSource.Factory<Integer, PostEntry> postsDataSourceFactory = mDataLocalCache.getPosts();
+//
+//
+//        // Construct the boundary callback
+//        PostsBoundaryCallback boundaryCallback =
+//                new PostsBoundaryCallback(mContext, mDataNetworkSource, mDataLocalCache);
+//
+//        LiveData<PagedList<PostEntry>> posts =
+//                new LivePagedListBuilder(postsDataSourceFactory, POSTS_DATABASE_PAGE_SIZE)
+//                        .setBoundaryCallback(boundaryCallback)
+//                        .build();
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).build();
 
-        // Get data source factory from the local cache
-        DataSource.Factory<Integer, PostEntry> postsDataSourceFactory = mDataLocalCache.getPosts();
+        RedditDataSourceFactory factory = new RedditDataSourceFactory(mDataNetworkSource, subredditEntry);
 
-
-        // Construct the boundary callback
-        PostsBoundaryCallback boundaryCallback =
-                new PostsBoundaryCallback(mContext, mDataNetworkSource, mDataLocalCache);
-
-        LiveData<PagedList<PostEntry>> posts =
-                new LivePagedListBuilder(postsDataSourceFactory, POSTS_DATABASE_PAGE_SIZE)
-                        .setBoundaryCallback(boundaryCallback)
-                        .build();
+        LiveData<PagedList<PostEntry>> posts = new LivePagedListBuilder(factory, config)
+                .setFetchExecutor(mExecutors.networkIO())
+                .build();
 
         return posts;
     }
@@ -102,7 +107,7 @@ public class RedditDataRepository {
     }
 
     public void deleteSubscription(SubredditEntry subredditEntry) {
-        needRefresh = true;
+        //needRefresh = true;
 
         // Delete subscription from reddit account.
         mExecutors.networkIO().execute(() -> {
@@ -113,15 +118,17 @@ public class RedditDataRepository {
                 if (subreddit.getDisplayName().equals(subredditEntry.getSubredditName())) {
                     Log.e(TAG, "deleteSubscription: unsubscribe");
                     manager.unsubscribe(subreddit);
+                    mDataLocalCache.deleteSubreddit(subredditEntry.getSubredditName());
+                    //mDataLocalCache.deletePosts(subredditEntry.getSubredditName());
                 }
             }
         });
 
-        // Delete subreddit from db.
-        mExecutors.diskIO().execute(() -> mDataLocalCache.deleteSubreddit(subredditEntry.getSubredditName()));
-
-        // Delete posts from db.
-        mExecutors.diskIO().execute(() -> mDataLocalCache.deletePosts(subredditEntry.getSubredditName()));
+//        // Delete subreddit from db.
+//        mExecutors.diskIO().execute(() ->
+//
+//        // Delete posts from db.
+//        mExecutors.diskIO().execute(() ->
 
     }
 

@@ -4,30 +4,28 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.http.oauth.Credentials;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
+import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
 import lv.st.sbogdano.redditreader.ui.subreddits.SubredditActivity;
-import lv.st.sbogdano.redditreader.viewmodels.PostsViewModel;
+import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
 import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
 public class PostsActivity extends AppCompatActivity {
@@ -36,24 +34,12 @@ public class PostsActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.posts_recycler_view)
-    RecyclerView mPostsRecyclerView;
-    @BindView(R.id.postsLL)
-    LinearLayout mPostsLL;
-    @BindView(R.id.noPosts)
-    LinearLayout mNoPosts;
-    @BindView(R.id.pb_loading_indicator)
-    ProgressBar mPbLoadingIndicator;
+    @BindView(R.id.tabs)
+    TabLayout mTabs;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
 
-    private boolean mFirstLoad = true;
-
-    private PostsViewModel mPostsViewModel;
-    private PostsAdapter mPostsAdapter = new PostsAdapter();
-
-    private Parcelable mState;
-    private static Bundle mBundleRecyclerViewState;
-    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout_state";
-
+    private SubredditViewModel mSubredditViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +47,21 @@ public class PostsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_posts);
         ButterKnife.bind(this);
 
-        mPostsViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
-                .get(PostsViewModel.class);
-
         setupToolBar();
-        setupPostsAdapter();
+
+        mSubredditViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
+                .get(SubredditViewModel.class);
+    }
+
+    private void subscribeDataStreams() {
+        mSubredditViewModel.getSubreddits().observe(this, this::setupViewPager);
+    }
+
+    private void setupViewPager(List<SubredditEntry> list) {
+        Log.v(TAG, "setupViewPager: " + list.size() );
+        mViewPager.setAdapter(new PostFragmentPagerAdapter(getSupportFragmentManager(), list));
+        mViewPager.setOffscreenPageLimit(1);
+        mTabs.setupWithViewPager(mViewPager);
     }
 
     private void setupToolBar() {
@@ -74,30 +70,10 @@ public class PostsActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupPostsAdapter() {
-        mPostsRecyclerView.addItemDecoration(
-                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-    }
-
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         checkAuthenticationState();
-        if (mBundleRecyclerViewState != null) {
-            mState = mBundleRecyclerViewState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
-        }
-        mPostsAdapter.submitList(null);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // save RecyclerView state
-        mBundleRecyclerViewState = new Bundle();
-        mState = mPostsRecyclerView.getLayoutManager().onSaveInstanceState();
-        mBundleRecyclerViewState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mState);
     }
 
     private void checkAuthenticationState() {
@@ -105,8 +81,7 @@ public class PostsActivity extends AppCompatActivity {
         Log.v(TAG, "checkAuthenticationState: " + state.toString());
         switch (state) {
             case READY:
-                subscribeDataStreams(mFirstLoad);
-                mFirstLoad = false;
+                subscribeDataStreams();
                 break;
             case NONE:
                 startActivity(new Intent(this, LoginActivity.class));
@@ -131,42 +106,11 @@ public class PostsActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                subscribeDataStreams(true);
+                subscribeDataStreams();
             }
         }.execute();
     }
 
-    private void subscribeDataStreams(boolean firstLoad) {
-        mPostsRecyclerView.setAdapter(mPostsAdapter);
-        mPostsViewModel.getPosts(firstLoad).observe(this, pagedLists -> {
-            Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
-            if (pagedLists != null && pagedLists.size() != 0) {
-                showPostView();
-            } else {
-                showEmptyList();
-                mPostsAdapter.submitList(null);
-                return;
-            }
-            mPostsAdapter.submitList(pagedLists);
-        });
-    }
-
-    private void showEmptyList() {
-        mNoPosts.setVisibility(View.VISIBLE);
-        mPostsRecyclerView.setVisibility(View.GONE);
-    }
-
-    private void showLoading() {
-        mPostsLL.setVisibility(View.INVISIBLE);
-        mNoPosts.setVisibility(View.INVISIBLE);
-        mPbLoadingIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void showPostView() {
-        mNoPosts.setVisibility(View.GONE);
-        mPostsRecyclerView.setVisibility(View.VISIBLE);
-        mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

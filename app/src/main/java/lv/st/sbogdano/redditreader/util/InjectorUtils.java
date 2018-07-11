@@ -25,7 +25,7 @@ public class InjectorUtils {
     public static DataLocalCache provideLocalCache(Context applicationContext) {
         AppExecutors executors = AppExecutors.getInstance();
         RedditDatabase database = RedditDatabase.getInstance(applicationContext);
-        return new DataLocalCache(database.postsDao(), database.subredditsDao(), executors);
+        return new DataLocalCache( database.subredditsDao(), executors);
     }
 
 }
