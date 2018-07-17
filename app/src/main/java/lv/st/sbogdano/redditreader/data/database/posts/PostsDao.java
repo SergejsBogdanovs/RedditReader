@@ -12,10 +12,10 @@ import java.util.List;
 public interface PostsDao {
 
 //    @Query("SELECT * FROM posts")
-//    DataSource.Factory<Integer, PostEntry> getPosts();
+//    DataSource.Factory<Integer, Post> getPosts();
 //
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    void insertAll(List<PostEntry> postEntries);
+//    void insertAll(List<Post> postEntries);
 //
 //    @Query("DELETE FROM posts")
 //    void deleteAllPosts();

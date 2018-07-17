@@ -6,23 +6,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.http.oauth.Credentials;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
 import lv.st.sbogdano.redditreader.ui.subreddits.SubredditActivity;
 import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
@@ -38,8 +37,13 @@ public class PostsActivity extends AppCompatActivity {
     TabLayout mTabs;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
+    @BindView(R.id.loading)
+    ProgressBar mLoading;
 
     private SubredditViewModel mSubredditViewModel;
+    private PostFragmentPagerAdapter mPagerAdapter;
+
+    private boolean mIsInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,32 +51,35 @@ public class PostsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_posts);
         ButterKnife.bind(this);
 
-        setupToolBar();
+        setSupportActionBar(mToolbar);
 
         mSubredditViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
                 .get(SubredditViewModel.class);
     }
 
     private void subscribeDataStreams() {
-        mSubredditViewModel.getSubreddits().observe(this, this::setupViewPager);
-    }
+        mSubredditViewModel.getSubreddits().observe(this, list -> {
 
-    private void setupViewPager(List<SubredditEntry> list) {
-        Log.v(TAG, "setupViewPager: " + list.size() );
-        mViewPager.setAdapter(new PostFragmentPagerAdapter(getSupportFragmentManager(), list));
-        mViewPager.setOffscreenPageLimit(1);
-        mTabs.setupWithViewPager(mViewPager);
-    }
-
-    private void setupToolBar() {
-        setSupportActionBar(mToolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+            if (list == null) {
+                Toast.makeText(this, "Sorry! No data!", Toast.LENGTH_LONG).show();
+            } else if (list.size() == 0) {
+                showLoading();
+            } else {
+                showData();
+                mPagerAdapter = new PostFragmentPagerAdapter(getSupportFragmentManager(), list);
+                mViewPager.setAdapter(mPagerAdapter);
+                mViewPager.setOffscreenPageLimit(list.size());
+                mTabs.setupWithViewPager(mViewPager);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (mIsInitialized) {
+            return;
+        }
         checkAuthenticationState();
     }
 
@@ -82,6 +89,7 @@ public class PostsActivity extends AppCompatActivity {
         switch (state) {
             case READY:
                 subscribeDataStreams();
+                mIsInitialized = true;
                 break;
             case NONE:
                 startActivity(new Intent(this, LoginActivity.class));
@@ -111,6 +119,15 @@ public class PostsActivity extends AppCompatActivity {
         }.execute();
     }
 
+    private void showLoading() {
+        mViewPager.setVisibility(View.INVISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void showData() {
+        mViewPager.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

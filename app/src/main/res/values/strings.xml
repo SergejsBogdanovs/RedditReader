@@ -17,8 +17,12 @@
     <!-- Sync -->
     <string name="reddit_client_location">subscriber</string>
     <string name="loading">Loading...</string>
+    <string name="comments_title">Comments</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Image content description -->
+    <string name="cd_post_image">Post image</string>
+    <string name="cd_post_share_icon">Post share icon</string>
+    <string name="cd_post_vote_icon">Post vote icon</string>
+    <string name="cd_post_comment_icon">Post comment icon</string>
 
 </resources>

@@ -29,17 +29,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.login.LoginActivity"></activity>
-        <activity android:name=".ui.subreddits.SubredditActivity"></activity>
+
+        <activity android:name=".ui.login.LoginActivity" />
+        <activity
+            android:name=".ui.subreddits.SubredditActivity"
+            android:parentActivityName=".ui.posts.PostsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.posts.PostsActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.details.PostDetailActivity"
+            android:parentActivityName=".ui.posts.PostsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.posts.PostsActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.comments.CommentsActivity" />
 
         <service
             android:name=".sync.PostsSyncIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".sync.SubredditsSyncIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
 
-        <activity android:name=".ui.details.PostDetailActivity"></activity>
     </application>
 
 </manifest>

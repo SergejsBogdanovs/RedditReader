@@ -4,48 +4,57 @@ import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.dean.jraw.models.Submission;
 
-import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
+import lv.st.sbogdano.redditreader.data.model.Post;
 
-public class PostsAdapter extends PagedListAdapter<PostEntry, RecyclerView.ViewHolder> {
+public class PostsAdapter extends PagedListAdapter<Submission, RecyclerView.ViewHolder> {
 
     private static final String TAG = "PostsAdapter";
+    private PostViewHolder.PostsAdapterOnItemClickHandler mClickHandler;
+    private final LinearLayout.LayoutParams params;
 
 
-    public static final DiffUtil.ItemCallback<PostEntry> POST_COMPARATOR
-            = new DiffUtil.ItemCallback<PostEntry>() {
+    private static final DiffUtil.ItemCallback<Submission> POST_COMPARATOR
+            = new DiffUtil.ItemCallback<Submission>() {
 
         @Override
-        public boolean areItemsTheSame(PostEntry oldItem, PostEntry newItem) {
-            return oldItem.getPostTitle().equals(newItem.getPostTitle());
+        public boolean areItemsTheSame(Submission oldItem, Submission newItem) {
+            return oldItem.getTitle().equals(newItem.getTitle());
         }
 
         @Override
-        public boolean areContentsTheSame(PostEntry oldItem, PostEntry newItem) {
+        public boolean areContentsTheSame(Submission oldItem, Submission newItem) {
             return true;
         }
     };
 
-    PostsAdapter() {
+    PostsAdapter(PostViewHolder.PostsAdapterOnItemClickHandler clickHandler) {
         super(POST_COMPARATOR);
+        mClickHandler = clickHandler;
+        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return PostViewHolder.getInstance(parent);
+        return PostViewHolder.getInstance(parent, mClickHandler);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        PostEntry postEntry = getItem(position);
-        if (postEntry != null) {
-            ((PostViewHolder) holder).bind(postEntry);
+        Submission submission = getItem(position);
+        if (submission != null && !submission.isNsfw()) {
+            ((PostViewHolder) holder).bind(submission);
+        } else {
+            params.height = 0;
+            holder.itemView.setLayoutParams(params);
         }
+
     }
 }

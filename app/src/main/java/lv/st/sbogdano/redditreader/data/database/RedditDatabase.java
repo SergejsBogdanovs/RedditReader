@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
-import lv.st.sbogdano.redditreader.data.database.posts.PostsDao;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
 

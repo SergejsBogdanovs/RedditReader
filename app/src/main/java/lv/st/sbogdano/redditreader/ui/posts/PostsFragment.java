@@ -1,15 +1,14 @@
 package lv.st.sbogdano.redditreader.ui.posts;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,24 +16,24 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import net.dean.jraw.auth.AuthenticationManager;
-import net.dean.jraw.auth.AuthenticationState;
-import net.dean.jraw.http.oauth.Credentials;
+import net.dean.jraw.models.Submission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lv.st.sbogdano.redditreader.R;
+import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
-import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
+import lv.st.sbogdano.redditreader.ui.details.PostDetailActivity;
 import lv.st.sbogdano.redditreader.viewmodels.PostsViewModel;
 import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
-public class PostsFragment extends Fragment {
+public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapterOnItemClickHandler {
 
     private static final String TAG = PostsFragment.class.getSimpleName();
 
     private static final String ARG_PARAM = "subreddit";
+
 
     @BindView(R.id.posts_recycler_view)
     RecyclerView mPostsRecyclerView;
@@ -50,12 +49,8 @@ public class PostsFragment extends Fragment {
 
     private SubredditEntry mSubredditEntry;
 
-    private Parcelable mState;
-    private static Bundle mBundleRecyclerViewState;
-    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout_state";
-
     private PostsViewModel mPostsViewModel;
-    private PostsAdapter mPostsAdapter = new PostsAdapter();
+    private PostsAdapter mPostsAdapter = new PostsAdapter(this);
 
 
     public PostsFragment() {
@@ -70,13 +65,6 @@ public class PostsFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mSubredditEntry = getArguments().getParcelable(ARG_PARAM);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,35 +79,41 @@ public class PostsFragment extends Fragment {
         mPostsRecyclerView.addItemDecoration(
                 new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (getArguments() != null) {
+            mSubredditEntry = getArguments().getParcelable(ARG_PARAM);
+        }
+
         subscribeDataStreams();
-        if (mBundleRecyclerViewState != null) {
-            mState = mBundleRecyclerViewState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
+
+        // Restore scroll position
+        if (savedInstanceState != null) {
+            final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            if (position != null)
+                mPostsRecyclerView.post(() -> mPostsRecyclerView.scrollTo(position[0], position[1]));
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        // save RecyclerView state
-        mBundleRecyclerViewState = new Bundle();
-        mState = mPostsRecyclerView.getLayoutManager().onSaveInstanceState();
-        mBundleRecyclerViewState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Saving scroll position
+        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+                new int[]{mPostsRecyclerView.getScrollX(), mPostsRecyclerView.getScrollY()});
     }
 
+
     private void subscribeDataStreams() {
-        mPostsRecyclerView.setAdapter(mPostsAdapter);
         mPostsViewModel.getPosts(mSubredditEntry).observe(this, pagedLists -> {
-            Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
+            //Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
             if (pagedLists != null && pagedLists.size() != 0) {
+                mPostsRecyclerView.setAdapter(mPostsAdapter);
                 showPostView();
             } else {
                 showEmptyList();
@@ -133,21 +127,19 @@ public class PostsFragment extends Fragment {
         mPostsRecyclerView.setVisibility(View.GONE);
     }
 
-    private void showLoading() {
-        mPostsLL.setVisibility(View.INVISIBLE);
-        mNoPosts.setVisibility(View.INVISIBLE);
-        mPbLoadingIndicator.setVisibility(View.VISIBLE);
-    }
-
     private void showPostView() {
         mNoPosts.setVisibility(View.GONE);
         mPostsRecyclerView.setVisibility(View.VISIBLE);
-        mPostsRecyclerView.getLayoutManager().onRestoreInstanceState(mState);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onItemClick(String submissionDataNode) {
+        PostDetailActivity.start((AppCompatActivity) getActivity(), submissionDataNode);
     }
 }

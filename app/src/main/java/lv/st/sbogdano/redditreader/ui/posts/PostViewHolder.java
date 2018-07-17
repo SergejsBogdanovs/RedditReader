@@ -10,10 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import net.dean.jraw.models.Submission;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
+import lv.st.sbogdano.redditreader.data.model.Post;
 
 public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -28,47 +30,47 @@ public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     @BindView(R.id.subreddit_name)
     TextView mSubredditName;
 
-    private PostEntry mPostEntry = null;
+    private Submission mSubmission;
 
-    public static PostViewHolder getInstance(ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-        return new PostViewHolder(view);
+    private final PostsAdapterOnItemClickHandler mClickHandler;
+
+    public interface PostsAdapterOnItemClickHandler {
+        void onItemClick(String submissionDataNode);
     }
 
-    private PostViewHolder(View itemView) {
+    public static PostViewHolder getInstance(ViewGroup parent, PostsAdapterOnItemClickHandler clickHandler) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+        return new PostViewHolder(view, clickHandler);
+    }
+
+    private PostViewHolder(View itemView, PostsAdapterOnItemClickHandler clickHandler) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        mClickHandler = clickHandler;
+        itemView.setOnClickListener(this);
     }
 
-    public void bind(PostEntry postEntry) {
-        if (postEntry == null) {
-            Resources resources = itemView.getResources();
-            mSubredditName.setText(resources.getString(R.string.loading));
+    public void bind(Submission submission) {
+        this.mSubmission = submission;
+        mSubredditName.setText(submission.getSubredditName());
+
+        String thumbnail = submission.getThumbnail();
+        if (thumbnail == null || thumbnail.isEmpty()) {
             mPostImage.setVisibility(View.GONE);
-            mPostTitle.setVisibility(View.GONE);
-            mCommentCount.setVisibility(View.GONE);
-            mScoreCount.setVisibility(View.GONE);
         } else {
-            showPostData(postEntry);
+            Picasso.get()
+                    .load(submission.getThumbnail())
+                    .into(mPostImage);
         }
-    }
 
-    private void showPostData(PostEntry postEntry) {
-        this.mPostEntry = postEntry;
-        mSubredditName.setText(postEntry.getSubredditName());
-
-        Picasso.get()
-                .load(postEntry.getPostThumbnail())
-                .into(mPostImage);
-
-        mPostTitle.setText(postEntry.getPostTitle());
-        mCommentCount.setText(String.valueOf(postEntry.getPostCommentsCount()));
-        mScoreCount.setText(String.valueOf(postEntry.getPostScore()));
+        mPostTitle.setText(submission.getTitle());
+        mCommentCount.setText(String.valueOf(submission.getCommentCount()));
+        mScoreCount.setText(String.valueOf(submission.getScore()));
     }
 
     @Override
     public void onClick(View view) {
-
+        mClickHandler.onItemClick(mSubmission.getDataNode().toString());
     }
 
 }

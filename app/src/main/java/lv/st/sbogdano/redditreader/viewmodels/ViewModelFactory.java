@@ -37,6 +37,8 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
             return (T) new PostsViewModel(mRedditDataRepository);
         } else if (modelClass.isAssignableFrom(SubredditViewModel.class)) {
             return (T) new SubredditViewModel(mRedditDataRepository);
+        } else if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
+            return (T) new CommentsViewModel(mRedditDataRepository);
         } else {
             throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
         }

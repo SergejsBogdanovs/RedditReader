@@ -1,11 +1,9 @@
 package lv.st.sbogdano.redditreader.data.database;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.paging.DataSource;
 
 import java.util.List;
 
-import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
 import lv.st.sbogdano.redditreader.data.database.posts.PostsDao;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
@@ -23,11 +21,11 @@ public class DataLocalCache {
         mExecutors = executors;
     }
 
-//    public DataSource.Factory<Integer, PostEntry> getPosts() {
+//    public DataSource.Factory<Integer, Post> getPosts() {
 //        return mPostsDao.getPosts();
 //    }
 //
-//    public void insertPosts(List<PostEntry> postEntries) {
+//    public void insertPosts(List<Post> postEntries) {
 //        mExecutors.diskIO().execute(() -> mPostsDao.insertAll(postEntries));
 //    }
 

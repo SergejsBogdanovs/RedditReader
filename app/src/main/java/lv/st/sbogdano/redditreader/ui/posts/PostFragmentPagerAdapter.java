@@ -4,12 +4,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 
-public class PostFragmentPagerAdapter extends FragmentPagerAdapter {
+public class PostFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<SubredditEntry> mSubredditEntries;
 
@@ -32,6 +33,11 @@ public class PostFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return mSubredditEntries.get(position).getSubredditName();
+    }
 
+    public void swapData(List<SubredditEntry> list) {
+        mSubredditEntries.clear();
+        mSubredditEntries = list;
+        notifyDataSetChanged();
     }
 }

@@ -8,14 +8,18 @@ import android.util.Log;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.Subreddit;
 
 import java.util.List;
 
 import lv.st.sbogdano.redditreader.data.database.DataLocalCache;
-import lv.st.sbogdano.redditreader.data.database.posts.PostEntry;
+import lv.st.sbogdano.redditreader.data.model.PostComment;
+import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
+import lv.st.sbogdano.redditreader.data.network.comments.CommentsDataSourceFactory;
+import lv.st.sbogdano.redditreader.data.network.posts.PostsDataSourceFactory;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
 
 public class RedditDataRepository {
@@ -59,34 +63,32 @@ public class RedditDataRepository {
         return sInstance;
     }
 
-    public LiveData<PagedList<PostEntry>> getPostsResult(SubredditEntry subredditEntry) {
+    public LiveData<PagedList<Submission>> getPostsResult(SubredditEntry subredditEntry) {
 
-//        if (firsLoad || needRefresh) {
-//            mDataLocalCache.deleteAllPosts();
-//        }
-//
-//        // Get data source factory from the local cache
-//        DataSource.Factory<Integer, PostEntry> postsDataSourceFactory = mDataLocalCache.getPosts();
-//
-//
-//        // Construct the boundary callback
-//        PostsBoundaryCallback boundaryCallback =
-//                new PostsBoundaryCallback(mContext, mDataNetworkSource, mDataLocalCache);
-//
-//        LiveData<PagedList<PostEntry>> posts =
-//                new LivePagedListBuilder(postsDataSourceFactory, POSTS_DATABASE_PAGE_SIZE)
-//                        .setBoundaryCallback(boundaryCallback)
-//                        .build();
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).build();
 
-        RedditDataSourceFactory factory = new RedditDataSourceFactory(mDataNetworkSource, subredditEntry);
+        PostsDataSourceFactory factory = new PostsDataSourceFactory(mDataNetworkSource, subredditEntry);
 
-        LiveData<PagedList<PostEntry>> posts = new LivePagedListBuilder(factory, config)
+        LiveData<PagedList<Submission>> posts = new LivePagedListBuilder(factory, config)
                 .setFetchExecutor(mExecutors.networkIO())
                 .build();
 
         return posts;
     }
+
+    public LiveData<PagedList<PostComment>> getCommentResult(Submission submission) {
+
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).build();
+
+        CommentsDataSourceFactory factory = new CommentsDataSourceFactory(mDataNetworkSource, submission);
+
+        LiveData<PagedList<PostComment>> postComments = new LivePagedListBuilder(factory, config)
+                .setFetchExecutor(mExecutors.networkIO())
+                .build();
+
+        return postComments;
+     }
+
 
     public LiveData<List<SubredditEntry>> getSubredditResults() {
         initializeData();
@@ -119,7 +121,6 @@ public class RedditDataRepository {
                     Log.e(TAG, "deleteSubscription: unsubscribe");
                     manager.unsubscribe(subreddit);
                     mDataLocalCache.deleteSubreddit(subredditEntry.getSubredditName());
-                    //mDataLocalCache.deletePosts(subredditEntry.getSubredditName());
                 }
             }
         });
