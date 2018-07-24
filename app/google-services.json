@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "940240984885",
+    "firebase_url": "https://redditreader-427e5.firebaseio.com",
+    "project_id": "redditreader-427e5",
+    "storage_bucket": "redditreader-427e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940240984885:android:e4319e234339c253",
+        "android_client_info": {
+          "package_name": "lv.st.sbogdano.redditreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940240984885-8obnojpo9068pqtmagf0pqrhre7ng2ob.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTHttXNUt6kxfqRTZce8gC8JdE0hlbGrs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
