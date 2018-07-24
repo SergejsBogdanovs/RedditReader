@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 if (url.contains("code=")) {
-                    onUserChallenge(url, CREDENTIALS);
+                    onUserChallenge(url);
                 } else if (url.contains("error=")) {
                     Toast.makeText(LoginActivity.this, R.string.must_login, Toast.LENGTH_SHORT).show();
                     mWebView.loadUrl(authorizationUrl.toExternalForm());
@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void onUserChallenge(String url, Credentials credentials) {
+    private void onUserChallenge(String url) {
         new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String... params) {
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                             .get()
                             .getRedditClient()
                             .getOAuthHelper()
-                            .onUserChallenge(params[0], credentials);
+                            .onUserChallenge(params[0], CREDENTIALS);
 
                     AuthenticationManager.get().getRedditClient().authenticate(data);
                     return AuthenticationManager.get().getRedditClient().getAuthenticatedUser();

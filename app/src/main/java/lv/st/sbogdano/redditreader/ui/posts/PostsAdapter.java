@@ -11,8 +11,7 @@ import net.dean.jraw.models.Submission;
 
 public class PostsAdapter extends PagedListAdapter<Submission, RecyclerView.ViewHolder> {
 
-    private static final String TAG = "PostsAdapter";
-    private PostViewHolder.PostsAdapterOnItemClickHandler mClickHandler;
+    private final PostViewHolder.PostsAdapterOnItemClickHandler mClickHandler;
     private final LinearLayout.LayoutParams params;
 
 

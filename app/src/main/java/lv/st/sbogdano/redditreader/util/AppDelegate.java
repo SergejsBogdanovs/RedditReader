@@ -18,14 +18,13 @@ public class AppDelegate extends MultiDexApplication{
 
     private static AppDelegate sInstance;
     private static final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
-    private static FirebaseAnalytics firebaseAnalytics;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sInstance = this;
 
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         RedditClient redditClient = new AndroidRedditClient(this);
         redditClient.setLoggingMode(LoggingMode.ALWAYS);
@@ -42,7 +41,4 @@ public class AppDelegate extends MultiDexApplication{
         return sInstance;
     }
 
-    public static FirebaseAnalytics getFirebaseAnalytics() {
-        return firebaseAnalytics;
-    }
 }

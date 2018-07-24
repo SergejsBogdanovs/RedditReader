@@ -315,7 +315,9 @@ public class PostDetailActivity extends AppCompatActivity {
                 .setType("text/plain")
                 .setText(getString(R.string.reddit_url) + mSubmission.getPermalink())
                 .getIntent();
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        }
         startActivity(shareIntent);
     }
 

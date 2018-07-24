@@ -9,8 +9,8 @@ import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 
 public class PostsDataSourceFactory extends DataSource.Factory<String, Submission> {
 
-    private DataNetworkSource mDataNetworkSource;
-    private SubredditEntry mSubredditEntry;
+    private final DataNetworkSource mDataNetworkSource;
+    private final SubredditEntry mSubredditEntry;
 
 
     public PostsDataSourceFactory(DataNetworkSource dataNetworkSource, SubredditEntry subredditEntry) {

@@ -33,10 +33,6 @@ public class DataNetworkSource {
 
     public static final String TAG = DataNetworkSource.class.getSimpleName();
 
-    // The number of posts we want our API to return, set to 100 posts.
-    public static final String ITEMS_PER_PAGE = "items_per_page";
-    public static final String PAGES_COUNT = "pages_count";
-
     // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static DataNetworkSource sInstance;

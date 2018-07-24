@@ -12,14 +12,13 @@ import lv.st.sbogdano.redditreader.data.model.UserSubreddit;
 
 public class PostWidgetRemoteViewService extends RemoteViewsService {
 
-    private PostWidgetManager mPostWidgetManager = new PostWidgetManager();
-    private static final String TAG = "PostWidgetRemoteViewSer";
+    private final PostWidgetManager mPostWidgetManager = new PostWidgetManager();
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new RemoteViewsFactory() {
 
-            private List<UserSubreddit> mUserSubreddits = new ArrayList<>();
+            private final List<UserSubreddit> mUserSubreddits = new ArrayList<>();
 
             @Override
             public void onCreate() {

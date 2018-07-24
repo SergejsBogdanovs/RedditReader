@@ -14,7 +14,7 @@ public class ManifestAppInfoProvider implements AppInfoProvider {
     private static final String KEY_REDIRECT_URL = "lv.st.sbogdano.redditreader.REDIRECT_URL";
     private static final String PLATFORM = "android";
 
-    private Context mContext;
+    private final Context mContext;
 
     public ManifestAppInfoProvider(Context context) {
         mContext = context;

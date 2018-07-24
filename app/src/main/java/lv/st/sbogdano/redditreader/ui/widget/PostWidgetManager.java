@@ -22,14 +22,12 @@ import lv.st.sbogdano.redditreader.util.AppDelegate;
 
 public class PostWidgetManager {
 
-    private static final String TAG = "PostWidgetManager";
-
     private static final String KEY_SUBREDDIT = "Subreddits";
     private static final String PREFERENCES_NAME = "PostWidgetManager";
 
-    private SharedPreferences mSharedPreferences;
-    private Application mApplication;
-    private ObjectMapper mObjectMapper;
+    private final SharedPreferences mSharedPreferences;
+    private final Application mApplication;
+    private final ObjectMapper mObjectMapper;
 
     public PostWidgetManager() {
         mApplication = AppDelegate.getAppContext();

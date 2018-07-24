@@ -27,8 +27,6 @@ import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
 public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapterOnItemClickHandler {
 
-    private static final String TAG = PostsFragment.class.getSimpleName();
-
     private static final String ARG_PARAM = "subreddit";
 
     private static final String POST_SCROLL_POSITION = "post_scroll_position";
@@ -48,7 +46,7 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
     private SubredditEntry mSubredditEntry;
 
     private PostsViewModel mPostsViewModel;
-    private PostsAdapter mPostsAdapter = new PostsAdapter(this);
+    private final PostsAdapter mPostsAdapter = new PostsAdapter(this);
 
 
     public PostsFragment() {

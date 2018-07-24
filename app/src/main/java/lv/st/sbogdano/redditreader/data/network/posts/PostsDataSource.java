@@ -10,8 +10,8 @@ import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 
 public class PostsDataSource extends ItemKeyedDataSource<String, Submission>{
     
-    private DataNetworkSource mDataNetworkSource;
-    private SubredditEntry mSubredditEntry;
+    private final DataNetworkSource mDataNetworkSource;
+    private final SubredditEntry mSubredditEntry;
     private int lastRequestedPage = 1;
 
     public PostsDataSource(DataNetworkSource dataNetworkSource, SubredditEntry subredditEntry) {

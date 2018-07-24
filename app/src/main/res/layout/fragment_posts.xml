@@ -33,7 +33,8 @@
             android:layout_width="@dimen/no_posts_icon_size"
             android:layout_height="@dimen/no_posts_icon_size"
             android:layout_gravity="center"
-            android:src="@drawable/emoticon_sad" />
+            app:srcCompat="@drawable/emoticon_sad"
+            android:contentDescription="@string/cd_no_post_icon" />
 
         <TextView
             android:id="@+id/noPostsText"

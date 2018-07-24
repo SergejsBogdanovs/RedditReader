@@ -13,9 +13,9 @@ import lv.st.sbogdano.redditreader.util.AppExecutors;
 
 public class DataLocalCache {
 
-    private SubredditsDao mSubredditsDao;
-    private SubmissionDao mSubmissionDao;
-    private AppExecutors mExecutors;
+    private final SubredditsDao mSubredditsDao;
+    private final SubmissionDao mSubmissionDao;
+    private final AppExecutors mExecutors;
 
     public DataLocalCache(SubredditsDao subredditsDao, SubmissionDao submissionDao, AppExecutors executors) {
         mSubredditsDao = subredditsDao;

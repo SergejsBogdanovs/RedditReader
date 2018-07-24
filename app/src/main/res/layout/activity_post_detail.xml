@@ -138,7 +138,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/post_detail_vote_down_img"
             app:layout_constraintEnd_toStartOf="@+id/post_detail_vote_count"
             app:layout_constraintTop_toTopOf="@+id/post_detail_vote_down_img"
-            app:srcCompat="@drawable/trending_up" />
+            app:srcCompat="@drawable/trending_up"
+            android:contentDescription="@string/cd_post_vote_icon" />
 
 
         <TextView

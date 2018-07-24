@@ -9,8 +9,8 @@ import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 
 public class CommentsDataSourceFactory extends DataSource.Factory<String, PostComment>{
 
-    private DataNetworkSource mDataNetworkSource;
-    private Submission mSubmission;
+    private final DataNetworkSource mDataNetworkSource;
+    private final Submission mSubmission;
 
     public CommentsDataSourceFactory(DataNetworkSource dataNetworkSource, Submission submission) {
         mDataNetworkSource = dataNetworkSource;

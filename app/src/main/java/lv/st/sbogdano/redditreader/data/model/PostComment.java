@@ -20,31 +20,19 @@ public class PostComment {
         return mCommentBody;
     }
 
-    public void setCommentBody(String commentBody) {
-        mCommentBody = commentBody;
-    }
 
     public String getCommentAuthor() {
         return mCommentAuthor;
     }
 
-    public void setCommentAuthor(String commentAuthor) {
-        mCommentAuthor = commentAuthor;
-    }
 
     public Date getCommentDate() {
         return mCommentDate;
     }
 
-    public void setCommentDate(Date commentDate) {
-        mCommentDate = commentDate;
-    }
 
     public int getDepth() {
         return mDepth;
     }
 
-    public void setDepth(int depth) {
-        mDepth = depth;
-    }
 }

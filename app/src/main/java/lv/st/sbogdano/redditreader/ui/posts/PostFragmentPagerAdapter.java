@@ -33,10 +33,4 @@ public class PostFragmentPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         return mSubredditEntries.get(position).getSubredditName();
     }
-
-    public void swapData(List<SubredditEntry> list) {
-        mSubredditEntries.clear();
-        mSubredditEntries = list;
-        notifyDataSetChanged();
-    }
 }

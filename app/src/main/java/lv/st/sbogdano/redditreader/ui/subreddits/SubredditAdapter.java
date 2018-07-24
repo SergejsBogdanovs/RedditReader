@@ -19,8 +19,8 @@ import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
 
 public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.SubredditsViewHolder> {
 
-    private SubredditViewModel mSubredditViewModel;
-    private Context mContext;
+    private final SubredditViewModel mSubredditViewModel;
+    private final Context mContext;
     private List<SubredditEntry> mSubredditEntries;
 
     SubredditAdapter(Context context, SubredditViewModel subredditViewModel, List<SubredditEntry> subredditEntries) {

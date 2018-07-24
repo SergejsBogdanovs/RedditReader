@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,8 +21,6 @@ import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
 import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
 public class SubredditActivity extends AppCompatActivity {
-
-    public static final String TAG = SubredditActivity.class.getSimpleName();
 
     @BindView(R.id.rv_subreddits)
     RecyclerView mRvSubreddits;

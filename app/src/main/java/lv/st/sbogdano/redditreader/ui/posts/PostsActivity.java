@@ -118,7 +118,7 @@ public class PostsActivity extends AppCompatActivity {
         }
     }
 
-    public void refreshAccessTokenAsync() {
+    private void refreshAccessTokenAsync() {
         new AsyncTask<Credentials, Void, Void>() {
             @Override
             protected Void doInBackground(Credentials... credentials) {

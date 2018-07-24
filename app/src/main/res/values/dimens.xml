@@ -6,10 +6,6 @@
 
     <!-- Posts list item -->
     <dimen name="post_image_width">100dp</dimen>
-    <dimen name="post_image_height">56dp</dimen>
-    <dimen name="post_item_height">88dp</dimen>
-    <dimen name="post_item_padding">16dp</dimen>
-    <dimen name="post_image_right_padding">20dp</dimen>
 
     <!-- Post details -->
     <dimen name="post_detail_title_text_size">20sp</dimen>

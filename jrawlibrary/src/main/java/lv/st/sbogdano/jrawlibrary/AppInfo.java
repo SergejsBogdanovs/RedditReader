@@ -4,9 +4,9 @@ import net.dean.jraw.http.UserAgent;
 
 public class AppInfo {
 
-    private String mClientId;
-    private String mRedirectUrl;
-    private UserAgent mUserAgent;
+    private final String mClientId;
+    private final String mRedirectUrl;
+    private final UserAgent mUserAgent;
 
     public AppInfo(String clientId, String redirectUrl, UserAgent userAgent) {
         mClientId = clientId;

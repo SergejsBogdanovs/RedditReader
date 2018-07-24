@@ -63,11 +63,9 @@ public class RedditDataRepository {
 
         PostsDataSourceFactory factory = new PostsDataSourceFactory(mDataNetworkSource, subredditEntry);
 
-        LiveData<PagedList<Submission>> posts = new LivePagedListBuilder(factory, config)
+        return (LiveData<PagedList<Submission>>) new LivePagedListBuilder(factory, config)
                 .setFetchExecutor(mExecutors.networkIO())
                 .build();
-
-        return posts;
     }
 
     public LiveData<PagedList<PostComment>> getCommentResult(Submission submission) {
@@ -76,11 +74,9 @@ public class RedditDataRepository {
 
         CommentsDataSourceFactory factory = new CommentsDataSourceFactory(mDataNetworkSource, submission);
 
-        LiveData<PagedList<PostComment>> postComments = new LivePagedListBuilder(factory, config)
+        return (LiveData<PagedList<PostComment>>) new LivePagedListBuilder(factory, config)
                 .setFetchExecutor(mExecutors.networkIO())
                 .build();
-
-        return postComments;
     }
 
     public LiveData<List<SubredditEntry>> getSubredditResults() {

@@ -10,7 +10,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -32,7 +31,6 @@ import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 public class CommentsActivity extends AppCompatActivity {
 
     private static final String SUBMISSION_COMMENT_EXTRA = "submission_comment_extra";
-    private static final String TAG = "CommentsActivity";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;

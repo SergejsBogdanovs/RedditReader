@@ -11,7 +11,7 @@ import lv.st.sbogdano.redditreader.data.model.PostComment;
 
 public class CommentsAdapter extends PagedListAdapter<PostComment, RecyclerView.ViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
 
 
     private static final DiffUtil.ItemCallback<PostComment> COMMENT_COMPARATOR = new DiffUtil.ItemCallback<PostComment>() {
