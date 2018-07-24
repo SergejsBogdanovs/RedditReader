@@ -4,13 +4,10 @@ import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import net.dean.jraw.models.Submission;
-
-import lv.st.sbogdano.redditreader.data.model.Post;
 
 public class PostsAdapter extends PagedListAdapter<Submission, RecyclerView.ViewHolder> {
 

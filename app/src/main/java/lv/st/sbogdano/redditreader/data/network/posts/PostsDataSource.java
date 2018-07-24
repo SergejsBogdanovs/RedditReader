@@ -5,14 +5,11 @@ import android.support.annotation.NonNull;
 
 import net.dean.jraw.models.Submission;
 
-import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 
 public class PostsDataSource extends ItemKeyedDataSource<String, Submission>{
-
-    private static final int NETWORK_PAGE_SIZE = 50;
-
+    
     private DataNetworkSource mDataNetworkSource;
     private SubredditEntry mSubredditEntry;
     private int lastRequestedPage = 1;

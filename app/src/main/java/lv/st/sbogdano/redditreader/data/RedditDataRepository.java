@@ -3,7 +3,6 @@ package lv.st.sbogdano.redditreader.data;
 import android.arch.lifecycle.LiveData;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.content.Context;
 import android.util.Log;
 
 import net.dean.jraw.auth.AuthenticationManager;
@@ -13,10 +12,11 @@ import net.dean.jraw.models.Subreddit;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import lv.st.sbogdano.redditreader.data.database.DataLocalCache;
-import lv.st.sbogdano.redditreader.data.model.PostComment;
-import lv.st.sbogdano.redditreader.data.model.Post;
+import lv.st.sbogdano.redditreader.data.database.submission.SubmissionEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
+import lv.st.sbogdano.redditreader.data.model.PostComment;
 import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 import lv.st.sbogdano.redditreader.data.network.comments.CommentsDataSourceFactory;
 import lv.st.sbogdano.redditreader.data.network.posts.PostsDataSourceFactory;
@@ -25,20 +25,16 @@ import lv.st.sbogdano.redditreader.util.AppExecutors;
 public class RedditDataRepository {
 
     private static final String TAG = "RedditDataRepository";
-    private static final int POSTS_DATABASE_PAGE_SIZE = 10;
 
     private static final Object LOCK = new Object();
     private static RedditDataRepository sInstance;
     private final DataLocalCache mDataLocalCache;
     private final DataNetworkSource mDataNetworkSource;
     private final AppExecutors mExecutors;
-    private Context mContext;
     private boolean mInitialized = false;
-    private boolean needRefresh = false;
 
-    private RedditDataRepository(Context context, DataLocalCache dataLocalCache,
+    private RedditDataRepository(DataLocalCache dataLocalCache,
                                  DataNetworkSource dataNetworkSource, AppExecutors executors) {
-        mContext = context;
         mDataLocalCache = dataLocalCache;
         mDataNetworkSource = dataNetworkSource;
         mExecutors = executors;
@@ -50,14 +46,12 @@ public class RedditDataRepository {
         }));
     }
 
-
-    public synchronized static RedditDataRepository getInstance(Context context,
-                                                                DataLocalCache dataLocalCache,
+    public synchronized static RedditDataRepository getInstance(DataLocalCache dataLocalCache,
                                                                 DataNetworkSource dataNetworkSource,
                                                                 AppExecutors executors) {
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new RedditDataRepository(context, dataLocalCache, dataNetworkSource, executors);
+                sInstance = new RedditDataRepository(dataLocalCache, dataNetworkSource, executors);
             }
         }
         return sInstance;
@@ -87,8 +81,7 @@ public class RedditDataRepository {
                 .build();
 
         return postComments;
-     }
-
+    }
 
     public LiveData<List<SubredditEntry>> getSubredditResults() {
         initializeData();
@@ -109,7 +102,6 @@ public class RedditDataRepository {
     }
 
     public void deleteSubscription(SubredditEntry subredditEntry) {
-        //needRefresh = true;
 
         // Delete subscription from reddit account.
         mExecutors.networkIO().execute(() -> {
@@ -124,14 +116,13 @@ public class RedditDataRepository {
                 }
             }
         });
-
-//        // Delete subreddit from db.
-//        mExecutors.diskIO().execute(() ->
-//
-//        // Delete posts from db.
-//        mExecutors.diskIO().execute(() ->
-
     }
 
+    public void saveSubmissionId(String submissionId, boolean isPostLiked) {
+        mDataLocalCache.saveSubmissionId(submissionId, isPostLiked);
+    }
 
+    public Maybe<SubmissionEntry> getSubmission(String id) {
+        return mDataLocalCache.getSubmissionId(id);
+    }
 }

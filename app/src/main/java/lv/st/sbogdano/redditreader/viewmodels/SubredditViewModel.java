@@ -2,7 +2,6 @@ package lv.st.sbogdano.redditreader.viewmodels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
-import android.arch.paging.PagedList;
 
 import java.util.List;
 

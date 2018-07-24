@@ -4,30 +4,24 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import lv.st.sbogdano.redditreader.data.database.posts.PostsDao;
+import io.reactivex.Maybe;
+import lv.st.sbogdano.redditreader.data.database.submission.SubmissionDao;
+import lv.st.sbogdano.redditreader.data.database.submission.SubmissionEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
 
 public class DataLocalCache {
 
-    private PostsDao mPostsDao;
     private SubredditsDao mSubredditsDao;
+    private SubmissionDao mSubmissionDao;
     private AppExecutors mExecutors;
 
-    public DataLocalCache( SubredditsDao subredditsDao, AppExecutors executors) {
-        //mPostsDao = postsDao;
+    public DataLocalCache(SubredditsDao subredditsDao, SubmissionDao submissionDao, AppExecutors executors) {
         mSubredditsDao = subredditsDao;
+        mSubmissionDao = submissionDao;
         mExecutors = executors;
     }
-
-//    public DataSource.Factory<Integer, Post> getPosts() {
-//        return mPostsDao.getPosts();
-//    }
-//
-//    public void insertPosts(List<Post> postEntries) {
-//        mExecutors.diskIO().execute(() -> mPostsDao.insertAll(postEntries));
-//    }
 
     public LiveData<List<SubredditEntry>> getSubreddits() {
         return mSubredditsDao.getSubbreddits();
@@ -45,11 +39,11 @@ public class DataLocalCache {
         mSubredditsDao.deleteSubreddit(name);
     }
 
-//    public void deletePosts(String subredditName) {
-//        mPostsDao.deletePostsByName(subredditName);
-//    }
-//
-//    public void deleteAllPosts() {
-//        mExecutors.diskIO().execute(() -> mPostsDao.deleteAllPosts());
-//    }
+    public void saveSubmissionId(String submissionId, boolean isPostLiked) {
+        mExecutors.diskIO().execute(() -> mSubmissionDao.insertSubmission(new SubmissionEntry(submissionId, isPostLiked)));
+    }
+
+    public Maybe<SubmissionEntry> getSubmissionId(String id) {
+        return mSubmissionDao.getSubmission(id);
+    }
 }

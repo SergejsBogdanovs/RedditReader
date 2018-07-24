@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -60,8 +58,6 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         ButterKnife.bind(this);
-
-        Log.v(TAG, "onCreate: ");
 
         if (getIntent().hasExtra(SUBMISSION_COMMENT_EXTRA)) {
             String submissionJson = getIntent().getStringExtra(SUBMISSION_COMMENT_EXTRA);
@@ -110,7 +106,6 @@ public class CommentsActivity extends AppCompatActivity {
         mRvComments.setVisibility(View.GONE);
         mPbLoading.setVisibility(View.VISIBLE);
     }
-
 
     private void setupToolBar() {
         setSupportActionBar(mToolbar);

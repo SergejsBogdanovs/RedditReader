@@ -1,6 +1,5 @@
 package lv.st.sbogdano.redditreader.ui.posts;
 
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import net.dean.jraw.models.Submission;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.data.model.Post;
 
 public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

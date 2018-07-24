@@ -23,10 +23,8 @@ import net.dean.jraw.paginators.UserSubredditsPaginator;
 import java.util.ArrayList;
 import java.util.List;
 
-import lv.st.sbogdano.redditreader.data.model.PostComment;
-import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
-import lv.st.sbogdano.redditreader.sync.PostsSyncIntentService;
+import lv.st.sbogdano.redditreader.data.model.PostComment;
 import lv.st.sbogdano.redditreader.sync.SubredditsSyncIntentService;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
@@ -47,14 +45,12 @@ public class DataNetworkSource {
 
     private final RedditClient redditClient = AuthenticationManager.get().getRedditClient();
 
-    private final MutableLiveData<List<Post>> mDownloadedPosts;
     private final MutableLiveData<List<SubredditEntry>> mDownloadedSubreddits;
 
 
     private DataNetworkSource(Context context, AppExecutors appExecutors) {
         mContext = context;
         mExecutors = appExecutors;
-        mDownloadedPosts = new MutableLiveData<>();
         mDownloadedSubreddits = new MutableLiveData<>();
     }
 
@@ -72,14 +68,6 @@ public class DataNetworkSource {
 
     public LiveData<List<SubredditEntry>> getUserSubreddits() {
         return mDownloadedSubreddits;
-    }
-
-    public synchronized void startFetchPostsService(int page, int items) {
-        Log.v(TAG, "startFetchPostsService");
-        Intent intent = new Intent(mContext, PostsSyncIntentService.class);
-        intent.putExtra(PAGES_COUNT, page);
-        intent.putExtra(ITEMS_PER_PAGE, items);
-        mContext.startService(intent);
     }
 
     public void startFetchSubredditsService() {
@@ -115,8 +103,9 @@ public class DataNetworkSource {
             for (int i = 0; i < pages; i++) {
                 posts = paginator.next();
             }
-            //Log.v(TAG, "loadPosts: " + posts.size());
-            callback.onResult(posts);
+            if (posts != null) {
+                callback.onResult(posts);
+            }
         }
     }
 
@@ -153,9 +142,7 @@ public class DataNetworkSource {
 
             callback.onResult(postComments);
         }
-
     }
-
 
     /**
      * Gets the user subscribed subreddits.
@@ -172,8 +159,6 @@ public class DataNetworkSource {
                     e.printStackTrace();
                 }
             }
-
-            //RedditClient redditClient = AuthenticationManager.get().getRedditClient();
 
             if (redditClient.isAuthenticated()) {
 
@@ -192,9 +177,6 @@ public class DataNetworkSource {
     }
 
     public List<Subreddit> getSubscribedSubreddits() {
-
-        //RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-
         // Fetching user subreddits
         UserSubredditsPaginator subredditsPaginator
                 = new UserSubredditsPaginator(redditClient, "subscriber");

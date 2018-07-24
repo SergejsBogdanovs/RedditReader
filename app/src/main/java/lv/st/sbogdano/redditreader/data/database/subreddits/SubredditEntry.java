@@ -7,8 +7,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import net.dean.jraw.models.Subreddit;
-
 @Entity(tableName = "subreddits",
         indices = {@Index(value = {"subredditName"}, unique = true)})
 public class SubredditEntry implements Parcelable{
@@ -26,6 +24,7 @@ public class SubredditEntry implements Parcelable{
     public SubredditEntry(String subredditName) {
         this.subredditName = subredditName;
     }
+
 
     public int getId() {
         return id;

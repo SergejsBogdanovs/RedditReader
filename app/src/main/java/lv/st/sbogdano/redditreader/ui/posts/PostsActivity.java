@@ -15,15 +15,22 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.http.oauth.Credentials;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lv.st.sbogdano.redditreader.R;
+import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
 import lv.st.sbogdano.redditreader.ui.subreddits.SubredditActivity;
+import lv.st.sbogdano.redditreader.ui.widget.PostWidgetManager;
 import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
 import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
@@ -39,6 +46,8 @@ public class PostsActivity extends AppCompatActivity {
     ViewPager mViewPager;
     @BindView(R.id.loading)
     ProgressBar mLoading;
+    @BindView(R.id.adView)
+    AdView mAdView;
 
     private SubredditViewModel mSubredditViewModel;
     private PostFragmentPagerAdapter mPagerAdapter;
@@ -55,6 +64,9 @@ public class PostsActivity extends AppCompatActivity {
 
         mSubredditViewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this))
                 .get(SubredditViewModel.class);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void subscribeDataStreams() {
@@ -66,12 +78,18 @@ public class PostsActivity extends AppCompatActivity {
                 showLoading();
             } else {
                 showData();
+                addToWidget(list);
                 mPagerAdapter = new PostFragmentPagerAdapter(getSupportFragmentManager(), list);
                 mViewPager.setAdapter(mPagerAdapter);
                 mViewPager.setOffscreenPageLimit(list.size());
                 mTabs.setupWithViewPager(mViewPager);
             }
         });
+    }
+
+    private void addToWidget(List<SubredditEntry> subredditEntries) {
+        PostWidgetManager postWidgetManager = new PostWidgetManager();
+        postWidgetManager.updatePostWidget(subredditEntries);
     }
 
     @Override
@@ -85,7 +103,6 @@ public class PostsActivity extends AppCompatActivity {
 
     private void checkAuthenticationState() {
         AuthenticationState state = AuthenticationManager.get().checkAuthState();
-        Log.v(TAG, "checkAuthenticationState: " + state.toString());
         switch (state) {
             case READY:
                 subscribeDataStreams();
@@ -96,6 +113,7 @@ public class PostsActivity extends AppCompatActivity {
                 break;
             case NEED_REFRESH:
                 refreshAccessTokenAsync();
+                mIsInitialized = true;
                 break;
         }
     }

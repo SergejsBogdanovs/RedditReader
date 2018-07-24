@@ -3,6 +3,8 @@
     <!-- Application -->
     <string name="app_name">RedditReader</string>
     <string name="unsubscribe">unsubscribe</string>
+    <string name="reddit_url">https://www.reddit.com</string>
+
 
     <!-- Login -->
     <string name="must_login">You have to login!</string>
@@ -24,5 +26,7 @@
     <string name="cd_post_share_icon">Post share icon</string>
     <string name="cd_post_vote_icon">Post vote icon</string>
     <string name="cd_post_comment_icon">Post comment icon</string>
+    <string name="add_to_widget">Add to widget</string>
+    <string name="my_subscribed_subreddits">My subscribed subreddits.</string>
 
 </resources>

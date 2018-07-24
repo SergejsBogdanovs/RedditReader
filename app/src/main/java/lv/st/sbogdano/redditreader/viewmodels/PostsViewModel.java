@@ -7,7 +7,6 @@ import android.arch.paging.PagedList;
 import net.dean.jraw.models.Submission;
 
 import lv.st.sbogdano.redditreader.data.RedditDataRepository;
-import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 
 public class PostsViewModel extends ViewModel{

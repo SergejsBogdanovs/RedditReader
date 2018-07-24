@@ -61,17 +61,42 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/cd_post_image"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/post_detail_date"
+            app:srcCompat="@drawable/emoticon_sad" />
+
+        <TextView
+            android:id="@+id/post_detail_body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:contentDescription="@string/cd_post_image"
-            app:layout_constraintBottom_toTopOf="@+id/post_detail_vote_img"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/post_detail_date"
-            app:srcCompat="@drawable/emoticon_sad" />
+            app:layout_constraintTop_toBottomOf="@+id/post_detail_date" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/black"
+            app:layout_constraintBottom_toTopOf="@+id/post_detail_share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/post_detail_share"
@@ -80,10 +105,11 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
+            android:contentDescription="@string/cd_post_share_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/share_variant"
-            android:contentDescription="@string/cd_post_share_icon" />
+            app:srcCompat="@drawable/share_variant" />
+
 
         <TextView
             android:id="@+id/post_detail_vote_count"
@@ -95,24 +121,25 @@
             android:layout_marginTop="8dp"
             android:textColor="#000000"
             android:textSize="@dimen/post_detail_title_text_size"
-            app:layout_constraintBottom_toBottomOf="@+id/post_detail_vote_img"
-            app:layout_constraintEnd_toStartOf="@+id/post_detail_vote_img"
-            app:layout_constraintTop_toTopOf="@+id/post_detail_vote_img"
+            app:layout_constraintBottom_toBottomOf="@+id/post_detail_vote_down_img"
+            app:layout_constraintEnd_toStartOf="@+id/post_detail_vote_down_img"
+            app:layout_constraintTop_toTopOf="@+id/post_detail_vote_down_img"
             app:layout_constraintVertical_bias="0.0"
             tools:text="180" />
 
         <ImageView
-            android:id="@+id/post_detail_vote_img"
+            android:id="@+id/post_detail_vote_up_img"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/post_detail_share"
-            app:layout_constraintEnd_toStartOf="@+id/post_detail_comment_count"
-            app:layout_constraintTop_toTopOf="@+id/post_detail_share"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/trending_up"
-            android:contentDescription="@string/cd_post_vote_icon" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/post_detail_vote_down_img"
+            app:layout_constraintEnd_toStartOf="@+id/post_detail_vote_count"
+            app:layout_constraintTop_toTopOf="@+id/post_detail_vote_down_img"
+            app:srcCompat="@drawable/trending_up" />
+
 
         <TextView
             android:id="@+id/post_detail_comment_count"
@@ -130,17 +157,32 @@
             tools:text="435" />
 
         <ImageView
+            android:id="@+id/post_detail_vote_down_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:contentDescription="@string/cd_post_vote_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/post_detail_share"
+            app:layout_constraintEnd_toStartOf="@+id/post_detail_comment_count"
+            app:layout_constraintTop_toTopOf="@+id/post_detail_share"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/trending_down" />
+
+
+        <ImageView
             android:id="@+id/post_detail_comment_img"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+            android:contentDescription="@string/cd_post_comment_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/post_detail_share"
-            app:srcCompat="@drawable/comment"
-            android:contentDescription="@string/cd_post_comment_icon" />
+            app:srcCompat="@drawable/comment" />
+
 
     </android.support.constraint.ConstraintLayout>
 

@@ -5,11 +5,13 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import lv.st.sbogdano.redditreader.data.database.submission.SubmissionDao;
+import lv.st.sbogdano.redditreader.data.database.submission.SubmissionEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditsDao;
 
 @Database(
-        entities = { SubredditEntry.class},
+        entities = {SubredditEntry.class, SubmissionEntry.class},
         version = 1,
         exportSchema = false
 )
@@ -35,4 +37,5 @@ public abstract class RedditDatabase extends RoomDatabase{
 
     //public abstract PostsDao postsDao();
     public abstract SubredditsDao subredditsDao();
+    public abstract SubmissionDao submissionDao();
 }

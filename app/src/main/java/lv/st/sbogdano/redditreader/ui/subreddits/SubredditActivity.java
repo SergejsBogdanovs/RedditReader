@@ -25,7 +25,6 @@ public class SubredditActivity extends AppCompatActivity {
 
     public static final String TAG = SubredditActivity.class.getSimpleName();
 
-
     @BindView(R.id.rv_subreddits)
     RecyclerView mRvSubreddits;
     @BindView(R.id.pb_loading)

@@ -16,13 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import net.dean.jraw.models.Submission;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lv.st.sbogdano.redditreader.R;
-import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.database.subreddits.SubredditEntry;
 import lv.st.sbogdano.redditreader.ui.details.PostDetailActivity;
 import lv.st.sbogdano.redditreader.viewmodels.PostsViewModel;
@@ -34,6 +31,7 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
 
     private static final String ARG_PARAM = "subreddit";
 
+    private static final String POST_SCROLL_POSITION = "post_scroll_position";
 
     @BindView(R.id.posts_recycler_view)
     RecyclerView mPostsRecyclerView;
@@ -65,7 +63,6 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
         return fragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,7 +91,7 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
 
         // Restore scroll position
         if (savedInstanceState != null) {
-            final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            final int[] position = savedInstanceState.getIntArray(POST_SCROLL_POSITION);
             if (position != null)
                 mPostsRecyclerView.post(() -> mPostsRecyclerView.scrollTo(position[0], position[1]));
         }
@@ -104,14 +101,12 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Saving scroll position
-        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+        outState.putIntArray(POST_SCROLL_POSITION,
                 new int[]{mPostsRecyclerView.getScrollX(), mPostsRecyclerView.getScrollY()});
     }
 
-
     private void subscribeDataStreams() {
         mPostsViewModel.getPosts(mSubredditEntry).observe(this, pagedLists -> {
-            //Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
             if (pagedLists != null && pagedLists.size() != 0) {
                 mPostsRecyclerView.setAdapter(mPostsAdapter);
                 showPostView();
@@ -142,4 +137,5 @@ public class PostsFragment extends Fragment implements PostViewHolder.PostsAdapt
     public void onItemClick(String submissionDataNode) {
         PostDetailActivity.start((AppCompatActivity) getActivity(), submissionDataNode);
     }
+
 }

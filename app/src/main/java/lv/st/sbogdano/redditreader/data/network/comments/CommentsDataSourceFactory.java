@@ -4,7 +4,6 @@ import android.arch.paging.DataSource;
 
 import net.dean.jraw.models.Submission;
 
-import lv.st.sbogdano.redditreader.data.model.Post;
 import lv.st.sbogdano.redditreader.data.model.PostComment;
 import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 

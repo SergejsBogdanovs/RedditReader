@@ -1,11 +1,11 @@
 package lv.st.sbogdano.redditreader.sync;
 
-        import android.app.IntentService;
-        import android.content.Intent;
-        import android.support.annotation.Nullable;
+import android.app.IntentService;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 
-        import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
-        import lv.st.sbogdano.redditreader.util.InjectorUtils;
+import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
+import lv.st.sbogdano.redditreader.util.InjectorUtils;
 
 public class SubredditsSyncIntentService extends IntentService{
 
