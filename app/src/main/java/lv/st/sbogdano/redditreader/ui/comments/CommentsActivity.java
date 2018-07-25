@@ -83,7 +83,7 @@ public class CommentsActivity extends AppCompatActivity {
             //Log.v(TAG, "subscribeDataStreams: " + pagedLists.size());
 
             if (pagedLists == null) {
-                Toast.makeText(this, "Sorry! No data!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_data_msg, Toast.LENGTH_LONG).show();
                 return;
             } else if (pagedLists.size() == 0) {
                 showLoading();

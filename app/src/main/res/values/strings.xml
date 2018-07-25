@@ -15,6 +15,8 @@
     <!-- SubredditsActivity -->
     <string name="my_subreddits_title">My Subreddits</string>
     <string name="action_my_subreddits">My Subreddits</string>
+    <string name="no_data_msg">Sorry! No data!</string>
+
 
     <!-- Sync -->
     <string name="comments_title">Comments</string>

@@ -9,6 +9,9 @@ import lv.st.sbogdano.redditreader.data.network.DataNetworkSource;
 
 public class InjectorUtils {
 
+    private InjectorUtils() {
+    }
+
     public static RedditDataRepository providePostsRepository(Context applicationContext) {
         AppExecutors executors = AppExecutors.getInstance();
         DataNetworkSource networkDataSource = provideNetworkDataSource(applicationContext);

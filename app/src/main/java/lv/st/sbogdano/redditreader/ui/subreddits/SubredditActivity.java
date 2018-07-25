@@ -59,9 +59,8 @@ public class SubredditActivity extends AppCompatActivity {
 
     public void subscribeDataStreams() {
         mSubredditViewModel.getSubreddits().observe(this, list -> {
-            //Log.v(TAG, "subscribeDataStreams: "  + list.size());
             if (list == null) {
-                Toast.makeText(this, "Sorry! No data!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_data_msg, Toast.LENGTH_LONG).show();
             } else if (list.size() == 0) {
                 showLoading();
             } else {

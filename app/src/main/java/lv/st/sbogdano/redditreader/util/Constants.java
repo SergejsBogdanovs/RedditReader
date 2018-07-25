@@ -9,4 +9,5 @@ public class Constants {
     public static final String WIDTH = "width";
     public static final String URL = "url";
     public static final String LIKES = "likes";
+    public static final String SUBSCRIBER = "subscriber";
 }

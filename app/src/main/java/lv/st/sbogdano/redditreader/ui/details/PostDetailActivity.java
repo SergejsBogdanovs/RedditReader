@@ -52,6 +52,7 @@ import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 public class PostDetailActivity extends AppCompatActivity {
 
     public static final String SUBMISSION_EXTRA = "SUBMISSION_EXTRA";
+    public static final String SHARE_INTENT_TYPE = "text/plain";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -312,7 +313,7 @@ public class PostDetailActivity extends AppCompatActivity {
     @OnClick(R.id.post_detail_share)
     public void sharePost() {
         Intent shareIntent = ShareCompat.IntentBuilder.from(this)
-                .setType("text/plain")
+                .setType(SHARE_INTENT_TYPE)
                 .setText(getString(R.string.reddit_url) + mSubmission.getPermalink())
                 .getIntent();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -24,8 +24,17 @@ import lv.st.sbogdano.redditreader.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final Credentials CREDENTIALS = Credentials.installedApp("PT-oBeSZSm4eVA",
-            "https://github.com/SergejsBogdanovs/RedditReader");
+    private static final String CLIENT_ID = "PT-oBeSZSm4eVA";
+    private static final String REDIRECT_URL = "https://github.com/SergejsBogdanovs/RedditReader";
+
+    private static final String IDENTITY = "identity";
+    private static final String READ = "read";
+    private static final String SUBSCRIBE = "subscribe";
+    private static final String MY_SUBREDDITS = "mysubreddits";
+    private static final String VOTE = "vote";
+
+
+    public static final Credentials CREDENTIALS = Credentials.installedApp(CLIENT_ID, REDIRECT_URL);
 
     private static final String LOG_TAG = LoginActivity.class.getSimpleName();
     @BindView(R.id.webView)
@@ -39,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final OAuthHelper helper = AuthenticationManager.get().getRedditClient().getOAuthHelper();
 
-        String[] scopes = {"identity", "read", "subscribe", "mysubreddits", "vote"};
+        String[] scopes = {IDENTITY, READ, SUBSCRIBE, MY_SUBREDDITS, VOTE};
 
         final URL authorizationUrl = helper.getAuthorizationUrl(
                 CREDENTIALS,
@@ -76,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                     AuthenticationManager.get().getRedditClient().authenticate(data);
                     return AuthenticationManager.get().getRedditClient().getAuthenticatedUser();
                 } catch (NetworkException | OAuthException e) {
-                    Log.e(LOG_TAG, "Could not log in", e);
+                    e.printStackTrace();
                     return null;
                 }
             }

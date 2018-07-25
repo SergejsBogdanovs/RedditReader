@@ -3,7 +3,6 @@ package lv.st.sbogdano.redditreader.data;
 import android.arch.lifecycle.LiveData;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.util.Log;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.managers.AccountManager;
@@ -23,8 +22,6 @@ import lv.st.sbogdano.redditreader.data.network.posts.PostsDataSourceFactory;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
 
 public class RedditDataRepository {
-
-    private static final String TAG = "RedditDataRepository";
 
     private static final Object LOCK = new Object();
     private static RedditDataRepository sInstance;
@@ -101,12 +98,10 @@ public class RedditDataRepository {
 
         // Delete subscription from reddit account.
         mExecutors.networkIO().execute(() -> {
-            Log.e(TAG, "deleteSubscription: execute");
             AccountManager manager = new AccountManager(AuthenticationManager.get().getRedditClient());
             List<Subreddit> subscribedSubreddits = mDataNetworkSource.getSubscribedSubreddits();
             for (Subreddit subreddit : subscribedSubreddits) {
                 if (subreddit.getDisplayName().equals(subredditEntry.getSubredditName())) {
-                    Log.e(TAG, "deleteSubscription: unsubscribe");
                     manager.unsubscribe(subreddit);
                     mDataLocalCache.deleteSubreddit(subredditEntry.getSubredditName());
                 }

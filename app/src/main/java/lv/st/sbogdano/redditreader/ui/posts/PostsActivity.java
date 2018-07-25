@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +34,6 @@ import lv.st.sbogdano.redditreader.viewmodels.SubredditViewModel;
 import lv.st.sbogdano.redditreader.viewmodels.ViewModelFactory;
 
 public class PostsActivity extends AppCompatActivity {
-
-    private static final String TAG = PostsActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -73,7 +70,7 @@ public class PostsActivity extends AppCompatActivity {
         mSubredditViewModel.getSubreddits().observe(this, list -> {
 
             if (list == null) {
-                Toast.makeText(this, "Sorry! No data!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_data_msg, Toast.LENGTH_LONG).show();
             } else if (list.size() == 0) {
                 showLoading();
             } else {
@@ -119,13 +116,14 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void refreshAccessTokenAsync() {
+
         new AsyncTask<Credentials, Void, Void>() {
             @Override
             protected Void doInBackground(Credentials... credentials) {
                 try {
                     AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
                 } catch (Exception e) {
-                    Log.e(TAG, "Could not refresh token!", e);
+                    e.printStackTrace();
                 }
                 return null;
             }

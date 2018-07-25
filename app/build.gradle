@@ -17,7 +17,7 @@ android {
         config {
             keyAlias 'RedditReaderKey'
             keyPassword 'redditkey'
-            storeFile file('/Users/sbogdano/AndroidStudioProjects/GoogleNDProgramm/MyProjects/RedditReader/app/reddit_reader')
+            storeFile file("reddit_reader.jks")
             storePassword 'redditstore'
         }
     }
@@ -45,6 +45,7 @@ dependencies {
     )
 
     // Support
+
     //noinspection GradleCompatible
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"

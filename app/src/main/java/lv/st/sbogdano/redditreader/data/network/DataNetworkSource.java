@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.ItemKeyedDataSource;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.common.collect.FluentIterable;
 
@@ -28,10 +27,9 @@ import lv.st.sbogdano.redditreader.data.model.PostComment;
 import lv.st.sbogdano.redditreader.sync.SubredditsSyncIntentService;
 import lv.st.sbogdano.redditreader.ui.login.LoginActivity;
 import lv.st.sbogdano.redditreader.util.AppExecutors;
+import lv.st.sbogdano.redditreader.util.Constants;
 
 public class DataNetworkSource {
-
-    public static final String TAG = DataNetworkSource.class.getSimpleName();
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
@@ -88,8 +86,6 @@ public class DataNetworkSource {
             }
         }
 
-        Log.v(TAG, "fetchPosts: is started");
-
         if (redditClient.isAuthenticated()) {
 
             // Fetching Posts
@@ -145,7 +141,6 @@ public class DataNetworkSource {
      */
     public void loadSubreddits() {
         mExecutors.networkIO().execute(() -> {
-            Log.v(TAG, "fetchSubreddits: is started");
 
             AuthenticationState state = AuthenticationManager.get().checkAuthState();
             if (state == AuthenticationState.NEED_REFRESH) {
@@ -160,7 +155,7 @@ public class DataNetworkSource {
 
                 // Fetching user subscribed Subreddits
                 UserSubredditsPaginator subredditsPaginator
-                        = new UserSubredditsPaginator(redditClient, "subscriber");
+                        = new UserSubredditsPaginator(redditClient, Constants.SUBSCRIBER);
                 Listing<Subreddit> subreddits = subredditsPaginator.next();
                 List<SubredditEntry> subredditEntries = new ArrayList<>();
                 for (Subreddit subreddit : subreddits) {
@@ -175,7 +170,7 @@ public class DataNetworkSource {
     public List<Subreddit> getSubscribedSubreddits() {
         // Fetching user subreddits
         UserSubredditsPaginator subredditsPaginator
-                = new UserSubredditsPaginator(redditClient, "subscriber");
+                = new UserSubredditsPaginator(redditClient, Constants.SUBSCRIBER);
 
         Listing<Subreddit> subreddits = subredditsPaginator.next();
 
